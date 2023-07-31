@@ -27,15 +27,9 @@ public class RecipesController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addRecipe(@RequestBody RecipeCreationDto recipeCreationDto) {
-        RecipeCreationDto a = new RecipeCreationDto("hello", null);
-        String b = a.getName();
-//        String name = recipeCreationDto.getName();
-        Recipe recipeCreation = RecipeMapper.MAPPER.recipeDtoToRecipe(recipeCreationDto);
-
-//        Recipe recipe = mapper.toRecipe(recipeCreationDto);
-//        recipeService.addRecipe(recipe);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+    public ResponseEntity<Recipe> addRecipe(@RequestBody RecipeCreationDto recipeCreationDto) {
+        Recipe newSavedRecipe = recipeService.addRecipe(recipeCreationDto);
+        return new ResponseEntity<>(newSavedRecipe, HttpStatus.OK);
     }
 
 }

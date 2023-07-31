@@ -1,6 +1,8 @@
 package com.shahaf.lettucecook.service;
 
+import com.shahaf.lettucecook.dto.RecipeCreationDto;
 import com.shahaf.lettucecook.entity.Recipe;
+import com.shahaf.lettucecook.mapper.RecipeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +13,13 @@ public class RecipeService {
     @Autowired
     private com.shahaf.lettucecook.reposetory.RecipesRepository RecipesRepository;
 
-    public List<Recipe> getAll(){
+    public List<Recipe> getAll() {
         return RecipesRepository.findAll();
     }
 
-    public void addRecipe(Recipe recipe){
-        RecipesRepository.save(recipe);
+    public Recipe addRecipe(RecipeCreationDto recipeCreationDto) {
+        Recipe recipeCreation = RecipeMapper.MAPPER.recipeDtoToRecipe(recipeCreationDto);
+        return RecipesRepository.save(recipeCreation);
     }
 
 }
