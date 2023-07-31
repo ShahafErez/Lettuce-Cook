@@ -2,6 +2,7 @@ package com.shahaf.lettucecook.controller;
 
 import com.shahaf.lettucecook.dto.RecipeCreationDto;
 import com.shahaf.lettucecook.entity.Recipe;
+import com.shahaf.lettucecook.mapper.RecipeMapper;
 import com.shahaf.lettucecook.service.RecipeService;
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ public class RecipesController {
     @PostMapping("/add")
     public ResponseEntity<String> addRecipe(@RequestBody RecipeCreationDto recipeCreationDto) {
         String name = recipeCreationDto.getName();
+        Recipe recipeCreation = RecipeMapper.MAPPER.recipeDtoToRecipe(recipeCreationDto);
+
 //        Recipe recipe = mapper.toRecipe(recipeCreationDto);
 //        recipeService.addRecipe(recipe);
         return new ResponseEntity<>("ok", HttpStatus.OK);
