@@ -11,5 +11,7 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String name;
-    private List<String> ingredients;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "recipe_id")
+    private List<Ingredient> ingredients;
 }

@@ -1,8 +1,11 @@
 package com.shahaf.lettucecook.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class RecipeCreationDto {
     private String name;
-    private List<String> ingredients;
+    private List<IngredientDto> ingredients;
 }
