@@ -28,7 +28,9 @@ public class RecipesController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addRecipe(@RequestBody RecipeCreationDto recipeCreationDto) {
-        String name = recipeCreationDto.getName();
+        RecipeCreationDto a = new RecipeCreationDto("hello", null);
+        String b = a.getName();
+//        String name = recipeCreationDto.getName();
         Recipe recipeCreation = RecipeMapper.MAPPER.recipeDtoToRecipe(recipeCreationDto);
 
 //        Recipe recipe = mapper.toRecipe(recipeCreationDto);
