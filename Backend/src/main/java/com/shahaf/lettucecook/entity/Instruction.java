@@ -9,6 +9,7 @@ import lombok.Data;
 public class Instruction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
     private Long index;
     private String description;
 }
