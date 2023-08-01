@@ -3,6 +3,7 @@ package com.shahaf.lettucecook.controller;
 import com.shahaf.lettucecook.dto.RecipeCreationDto;
 import com.shahaf.lettucecook.entity.Recipe;
 import com.shahaf.lettucecook.service.RecipeService;
+import jakarta.validation.Valid;
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,15 +22,14 @@ public class RecipesController {
     private Mapper mapper;
 
     @GetMapping("/get-all")
-    public List<Recipe> getAllRecipes() {
-        return recipeService.getAll();
+    public ResponseEntity<List<Recipe>> getAllRecipes() {
+        return new ResponseEntity<>(recipeService.getAll(), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addRecipe(@RequestBody RecipeCreationDto recipeCreationDto) {
-//        Recipe recipe = mapper.toRecipe(recipeCreationDto);
-//        recipeService.addRecipe(recipe);
-        return new ResponseEntity<>("ok", HttpStatus.OK);
+    public ResponseEntity<Recipe> addRecipe(@Valid @RequestBody RecipeCreationDto recipeCreationDto) {
+        Recipe newSavedRecipe = recipeService.addRecipe(recipeCreationDto);
+        return new ResponseEntity<>(newSavedRecipe, HttpStatus.CREATED);
     }
 
 }

@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(name = "ingredients")
+@Table(name = "instructions")
 @Data
-public class Ingredient {
+public class Instruction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
-    private String name;
-    private String unit;
-    private Float amount;
-
+    private Long index;
+    private String description;
 }
