@@ -10,6 +10,6 @@ import org.mapstruct.factory.Mappers;
 public interface RecipeMapper {
     RecipeMapper MAPPER = Mappers.getMapper(RecipeMapper.class);
 
+    @Mapping(target = "id", ignore = true)
     Recipe recipeDtoToRecipe(RecipeCreationDto recipeCreationDto);
-
 }
