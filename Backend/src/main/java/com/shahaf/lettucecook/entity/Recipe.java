@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 public class Recipe {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     private Long id;
     private String name;
     private Boolean vegetarian;

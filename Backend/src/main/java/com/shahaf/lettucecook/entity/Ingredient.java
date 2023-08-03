@@ -1,6 +1,9 @@
 package com.shahaf.lettucecook.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
@@ -8,7 +11,7 @@ import lombok.Data;
 @Data
 public class Ingredient {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue
     private Long id;
     private String name;
     private String unit;
