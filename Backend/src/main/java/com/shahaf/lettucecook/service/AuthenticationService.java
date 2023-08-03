@@ -40,7 +40,7 @@ public class AuthenticationService {
 
     public AuthenticationResponseDto authenticate(AuthenticationDto authenticationDto) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationDto.getEmail(), authenticationDto.getEmail()
+                authenticationDto.getEmail(), authenticationDto.getPassword()
         ));
 
         Optional<User> optionalUser = userRepository.findByEmail(authenticationDto.getEmail());
