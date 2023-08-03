@@ -8,6 +8,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+//import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,15 +37,16 @@ public class ApplicationConfig {
         return authProvider;
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-//        return config.getAuthenticationManager();
-//    }
-
     @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(List.of(authenticationProvider()));
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
+
+//    // TODO- different from video
+//    @Bean
+//    public AuthenticationManager authenticationManager() {
+//        return new ProviderManager(List.of(authenticationProvider()));
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
