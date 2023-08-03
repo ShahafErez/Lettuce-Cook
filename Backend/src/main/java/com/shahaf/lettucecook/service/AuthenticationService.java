@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.shahaf.lettucecook.constants.MessagesConstants.USER_NOT_FOUND_MESSAGE;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -32,7 +34,7 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponseDto.builder()
                 .token(jwtToken)
                 .build();
@@ -42,10 +44,9 @@ public class AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationDto.getEmail(), authenticationDto.getPassword()
         ));
-
         Optional<User> optionalUser = userRepository.findByEmail(authenticationDto.getEmail());
-        User user = optionalUser.orElseThrow(() -> new NoSuchElementException("User not found"));
-        var jwtToken = jwtService.generateToken(user);
+        User user = optionalUser.orElseThrow(() -> new NoSuchElementException(USER_NOT_FOUND_MESSAGE));
+        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponseDto.builder()
                 .token(jwtToken)
                 .build();

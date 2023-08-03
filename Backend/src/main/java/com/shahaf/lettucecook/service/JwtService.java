@@ -20,7 +20,8 @@ import static com.shahaf.lettucecook.constants.JwtConstants.TOKEN_EXPIRATION_TIM
 @Service
 public class JwtService {
 
-    public String extractUsername(String jwtToken) {
+
+    public String extractEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
@@ -45,8 +46,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String jwtToken, UserDetails userDetails) {
-        final String username = extractUsername(jwtToken);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(jwtToken);
+        final String email = extractEmail(jwtToken);
+        return (email.equals(userDetails.getUsername())) && !isTokenExpired(jwtToken);
     }
 
     private boolean isTokenExpired(String jwtToken) {

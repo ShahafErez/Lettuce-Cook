@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static com.shahaf.lettucecook.constants.MessagesConstants.USER_NOT_FOUND_MESSAGE;
+
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
@@ -21,11 +23,8 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        // TODO- change to email
-//        return username -> userRepository.findByEmail(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return email -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND_MESSAGE));
     }
 
     @Bean

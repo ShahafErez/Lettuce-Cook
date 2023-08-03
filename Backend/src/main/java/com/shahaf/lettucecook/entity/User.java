@@ -37,6 +37,12 @@ public class User implements UserDetails {
     }
 
     @Override
+    // setting the email as the token subject
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
