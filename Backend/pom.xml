@@ -14,9 +14,11 @@
     <name>lettuce-cook</name>
     <description>Demo project for Spring Boot</description>
     <properties>
+<!--        <spring-boot.version>2.5.5</spring-boot.version>-->
         <java.version>17</java.version>
         <snakeyaml.version>1.31</snakeyaml.version>
-        <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
+<!--        <spring.version>6.0.11</spring.version>-->
+<!--        <spring-security.version>4.0.2.RELEASE</spring-security.version>-->
         <org.springframework.version>4.0.4.RELEASE</org.springframework.version>
     </properties>
 
@@ -94,10 +96,20 @@
             <artifactId>spring-security-web</artifactId>
             <version>6.1.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--            <version>3.1.2</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-config</artifactId>-->
+<!--            <version>6.1.2</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
