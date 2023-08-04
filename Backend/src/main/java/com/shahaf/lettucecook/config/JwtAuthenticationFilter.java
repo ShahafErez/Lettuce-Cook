@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -37,9 +38,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwtToken = authHeader.substring(AUTH_HEADER_PREFIX.length());
         email = jwtService.extractEmail(jwtToken);
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) // the user is not authenticated yet
-        {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email); // getting user details from db
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // the user is not authenticated yet
+            UserDetails userDetails;
+            try {
+                userDetails = userDetailsService.loadUserByUsername(email);
+            } catch (UsernameNotFoundException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write(String.format("Email %s not found.", email));
+                response.getWriter().flush();
+                return;
+            }
+
             if (jwtService.isTokenValid(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
