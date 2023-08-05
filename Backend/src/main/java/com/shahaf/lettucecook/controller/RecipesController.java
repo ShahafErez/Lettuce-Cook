@@ -26,10 +26,21 @@ public class RecipesController {
         return new ResponseEntity<>(recipeService.getAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/get/{recipeId}")
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long recipeId) {
+        return new ResponseEntity<>(recipeService.getRecipeById(recipeId), HttpStatus.OK);
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<Recipe> addRecipe(@Valid @RequestBody RecipeCreationDto recipeCreationDto) {
+    public ResponseEntity<String> addRecipe(@Valid @RequestBody RecipeCreationDto recipeCreationDto) {
         Recipe newSavedRecipe = recipeService.addRecipe(recipeCreationDto);
-        return new ResponseEntity<>(newSavedRecipe, HttpStatus.CREATED);
+        return new ResponseEntity<>("Recipe added successfully. New recipe id: " + newSavedRecipe.getId(), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete/{recipeId}")
+    public ResponseEntity<String> deleteRecipe(@PathVariable Long recipeId) {
+        recipeService.deleteRecipe(recipeId);
+        return new ResponseEntity<>(String.format("Recipe %s deleted.", recipeId), HttpStatus.OK);
     }
 
 }
