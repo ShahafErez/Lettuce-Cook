@@ -37,7 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwtToken = authHeader.substring(AUTH_HEADER_PREFIX.length());
-        email = jwtService.extractEmail(jwtToken);
+        try {
+            email = jwtService.extractEmail(jwtToken);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token is not valid");
+            response.getWriter().flush();
+            return;
+        }
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) { // the user is not authenticated yet
             UserDetails userDetails;
             try {

@@ -5,11 +5,13 @@ import com.shahaf.lettucecook.dto.RegisterDto;
 import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.enums.Role;
+import com.shahaf.lettucecook.exceptions.AuthenticationException;
 import com.shahaf.lettucecook.exceptions.UserDetailsAlreadyExistsException;
 import com.shahaf.lettucecook.reposetory.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,9 +45,13 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationDto authenticationDto) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationDto.getEmail(), authenticationDto.getPassword()
-        ));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    authenticationDto.getEmail(), authenticationDto.getPassword()
+            ));
+        } catch (BadCredentialsException e) {
+            throw new AuthenticationException("Username does not exists or password is incorrect");
+        }
         Optional<User> optionalUser = userRepository.findByEmail(authenticationDto.getEmail());
         User user = optionalUser.orElseThrow(() -> new NoSuchElementException(USER_NOT_FOUND_MESSAGE));
         String jwtToken = jwtService.generateToken(user);
