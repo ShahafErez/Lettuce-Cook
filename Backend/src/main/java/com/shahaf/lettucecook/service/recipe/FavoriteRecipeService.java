@@ -5,11 +5,15 @@ import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Favorite;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.exceptions.ResourceAlreadyExistsException;
+import com.shahaf.lettucecook.exceptions.ResourceNotFound;
 import com.shahaf.lettucecook.reposetory.recipe.FavoriteRecipeRepository;
 import com.shahaf.lettucecook.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FavoriteRecipeService {
@@ -49,5 +53,14 @@ public class FavoriteRecipeService {
     public void removeFavoriteRecipe(Long recipeId, String username) {
         User user = userService.getUserByUsername(username);
         favoriteRecipeRepository.deleteByRecipeIdAndUserId(recipeId, user.getId());
+    }
+
+    public List<Favorite> getFavoritesByUser(String username) {
+        Long userId = userService.getUserByUsername(username).getId();
+        Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(userId);
+        if (!(favoritesList.isPresent())) {
+            throw new ResourceNotFound(String.format("User %d doesn't have favorite recipes", userId));
+        }
+        return favoritesList.get();
     }
 }
