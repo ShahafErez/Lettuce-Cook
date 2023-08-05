@@ -6,7 +6,7 @@ import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.enums.Role;
 import com.shahaf.lettucecook.exceptions.AuthenticationException;
-import com.shahaf.lettucecook.exceptions.UserDetailsAlreadyExistsException;
+import com.shahaf.lettucecook.exceptions.ResourceAlreadyExistsException;
 import com.shahaf.lettucecook.reposetory.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
@@ -72,7 +72,7 @@ public class AuthenticationService {
 
         String finalErrorMessage = errorMessage.toString().trim();
         if (!finalErrorMessage.isEmpty()) {
-            throw new UserDetailsAlreadyExistsException(finalErrorMessage);
+            throw new ResourceAlreadyExistsException(finalErrorMessage);
         }
     }
 

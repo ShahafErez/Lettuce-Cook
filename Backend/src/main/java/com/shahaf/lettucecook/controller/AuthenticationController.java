@@ -3,14 +3,14 @@ package com.shahaf.lettucecook.controller;
 import com.shahaf.lettucecook.dto.AuthenticationDto;
 import com.shahaf.lettucecook.dto.RegisterDto;
 import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
-import com.shahaf.lettucecook.dto.response.ErrorResponse;
-import com.shahaf.lettucecook.exceptions.UserDetailsAlreadyExistsException;
 import com.shahaf.lettucecook.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -28,11 +28,5 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationDto authenticationDto) {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationDto));
 
-    }
-
-    @ExceptionHandler(value = UserDetailsAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleCustomerAlreadyExistsException(UserDetailsAlreadyExistsException ex) {
-        return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
     }
 }
