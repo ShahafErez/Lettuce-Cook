@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RecipeFavoriteDto {
+public class FavoriteRecipeDto {
     @NotBlank
     private String recipeId;
     @NotBlank

@@ -1,9 +1,9 @@
 package com.shahaf.lettucecook.service.recipe;
 
-import com.shahaf.lettucecook.dto.recipe.RecipeFavoriteDto;
+import com.shahaf.lettucecook.dto.recipe.FavoriteRecipeDto;
+import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Favorite;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
-import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.exceptions.ResourceAlreadyExistsException;
 import com.shahaf.lettucecook.reposetory.recipe.FavoriteRecipeRepository;
 import com.shahaf.lettucecook.service.UserService;
@@ -20,9 +20,9 @@ public class FavoriteRecipeService {
     @Autowired
     private UserService userService;
 
-    public void addRecipeFavorite(RecipeFavoriteDto recipeFavoriteDto) {
-        User user = userService.getUserByUsername(recipeFavoriteDto.getUsername());
-        Recipe recipe = recipeGlobalService.getRecipeById(Long.valueOf(recipeFavoriteDto.getRecipeId()));
+    public void addFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
+        User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
+        Recipe recipe = recipeGlobalService.getRecipeById(Long.valueOf(favoriteRecipeDto.getRecipeId()));
         validateRecipeNotAddedAsFavorite(recipe.getId(), user.getId());
         createNewFavoriteObject(user, recipe);
     }
@@ -43,5 +43,11 @@ public class FavoriteRecipeService {
     @Transactional
     public void deleteAllFavoritesByRecipe(Long recipeId) {
         favoriteRecipeRepository.deleteAllFavoritesByRecipe(recipeId);
+    }
+
+    @Transactional
+    public void removeFavoriteRecipe(Long recipeId, String username) {
+        User user = userService.getUserByUsername(username);
+        favoriteRecipeRepository.deleteByRecipeIdAndUserId(recipeId, user.getId());
     }
 }

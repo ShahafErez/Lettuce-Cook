@@ -17,4 +17,8 @@ public interface FavoriteRecipeRepository extends JpaRepository<Favorite, Long> 
     @Modifying
     @Query("DELETE FROM Favorite f WHERE f.recipe.id = ?1")
     void deleteAllFavoritesByRecipe(Long recipeId);
+
+    @Modifying
+    @Query("DELETE FROM Favorite f WHERE f.recipe.id = ?1 AND f.user.id = ?2")
+    void deleteByRecipeIdAndUserId(Long recipeId, Long userId);
 }
