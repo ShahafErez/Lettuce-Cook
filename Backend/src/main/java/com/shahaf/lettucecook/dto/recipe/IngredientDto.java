@@ -1,4 +1,4 @@
-package com.shahaf.lettucecook.dto;
+package com.shahaf.lettucecook.dto.recipe;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

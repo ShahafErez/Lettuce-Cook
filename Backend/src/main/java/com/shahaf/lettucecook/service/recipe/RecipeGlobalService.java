@@ -1,8 +1,8 @@
-package com.shahaf.lettucecook.service;
+package com.shahaf.lettucecook.service.recipe;
 
-import com.shahaf.lettucecook.entity.Recipe;
+import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.exceptions.ResourceNotFound;
-import com.shahaf.lettucecook.reposetory.RecipesRepository;
+import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

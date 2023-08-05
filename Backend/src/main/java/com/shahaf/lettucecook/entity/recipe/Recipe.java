@@ -1,4 +1,4 @@
-package com.shahaf.lettucecook.entity;
+package com.shahaf.lettucecook.entity.recipe;
 
 import jakarta.persistence.*;
 import lombok.Data;

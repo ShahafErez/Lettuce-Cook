@@ -1,8 +1,8 @@
-package com.shahaf.lettucecook.controller;
+package com.shahaf.lettucecook.controller.recipe;
 
-import com.shahaf.lettucecook.dto.RecipeCreationDto;
-import com.shahaf.lettucecook.entity.Recipe;
-import com.shahaf.lettucecook.service.RecipeService;
+import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.entity.recipe.Recipe;
+import com.shahaf.lettucecook.service.recipe.RecipeService;
 import jakarta.validation.Valid;
 import org.apache.catalina.mapper.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;

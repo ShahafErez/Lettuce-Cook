@@ -1,5 +1,6 @@
-package com.shahaf.lettucecook.entity;
+package com.shahaf.lettucecook.entity.recipe;
 
+import com.shahaf.lettucecook.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,9 +1,9 @@
-package com.shahaf.lettucecook.service;
+package com.shahaf.lettucecook.service.recipe;
 
-import com.shahaf.lettucecook.dto.RecipeCreationDto;
-import com.shahaf.lettucecook.entity.Recipe;
+import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
-import com.shahaf.lettucecook.reposetory.RecipesRepository;
+import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class RecipeService {
     @Autowired
     private RecipeGlobalService recipeGlobalService;
     @Autowired
-    private RecipeFavoriteService recipeFavoriteService;
+    private FavoriteRecipeService favoriteRecipeService;
 
     public List<Recipe> getAll() {
         return recipesRepository.findAll();
@@ -31,7 +31,7 @@ public class RecipeService {
     public void deleteRecipe(Long recipeId) {
         Recipe recipe = recipeGlobalService.getRecipeById(recipeId);
         if (recipe != null) {
-            recipeFavoriteService.deleteAllFavoritesByRecipe(recipeId);
+            favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
         }
     }

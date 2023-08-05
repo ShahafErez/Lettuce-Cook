@@ -1,7 +1,7 @@
-package com.shahaf.lettucecook.controller;
+package com.shahaf.lettucecook.controller.recipe;
 
-import com.shahaf.lettucecook.dto.RecipeFavoriteDto;
-import com.shahaf.lettucecook.service.RecipeFavoriteService;
+import com.shahaf.lettucecook.dto.recipe.RecipeFavoriteDto;
+import com.shahaf.lettucecook.service.recipe.FavoriteRecipeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "api/v1/favorite")
-public class RecipesFavoriteController {
+public class FavoriteRecipeController {
 
     @Autowired
-    private RecipeFavoriteService recipeFavoriteService;
+    private FavoriteRecipeService favoriteRecipeService;
 
     @PostMapping("/add")
     public ResponseEntity<String> addRecipeFavorite(@Valid @RequestBody RecipeFavoriteDto recipeFavoriteDto) {
-        recipeFavoriteService.addRecipeFavorite(recipeFavoriteDto);
+        favoriteRecipeService.addRecipeFavorite(recipeFavoriteDto);
         return new ResponseEntity<>("Recipes successfully added to favorites.", HttpStatus.CREATED);
     }
 }
