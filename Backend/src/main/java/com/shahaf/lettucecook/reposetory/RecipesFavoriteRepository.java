@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface RecipesFavoriteRepository extends JpaRepository<Favorite, Long> {
 
     @Query("SELECT f FROM Favorite f WHERE f.recipe.id = ?1 AND f.user.id = ?2")
-    Optional<Favorite> findByRecipeIdAndUserId(Long recipeId, Integer userId);
+    Optional<Favorite> findByRecipeIdAndUserId(Long recipeId, Long userId);
 
     @Modifying
     @Query("DELETE FROM Favorite f WHERE f.recipe.id = ?1")

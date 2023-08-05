@@ -26,7 +26,7 @@ public class RecipeFavoriteService {
         createNewFavoriteObject(user, recipe);
     }
 
-    private void validateRecipeNotAddedAsFavorite(Long recipeId, Integer userId) {
+    private void validateRecipeNotAddedAsFavorite(Long recipeId, Long userId) {
         if (recipesFavoriteRepository.findByRecipeIdAndUserId(recipeId, userId).isPresent()) {
             throw new ResourceAlreadyExistsException(String.format("Recipe %s already saved as favorite by user %s", recipeId, userId));
         }
