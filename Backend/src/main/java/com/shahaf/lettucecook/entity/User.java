@@ -23,10 +23,11 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
+    @Column(unique = true)
     private String username;
+    @Column(unique = true)
     private String email;
     private String password;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
