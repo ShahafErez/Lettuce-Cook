@@ -26,6 +26,8 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error").permitAll() // allowing the error message to be shown
+                        .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/recipes/get/**").permitAll()
                         .requestMatchers("/api/v1/recipes/get-all").permitAll()

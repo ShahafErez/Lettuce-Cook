@@ -27,7 +27,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ResourceAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex) {
-        return new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage());
+        Object errorResponse = ex.getErrorMessages() != null
+                ? ex.getErrorMessages().getErrors()
+                : ex.getErrorMessage();
+
+        return new ErrorResponse(HttpStatus.CONFLICT.value(), errorResponse);
     }
 
 }
