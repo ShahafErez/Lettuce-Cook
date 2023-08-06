@@ -1,4 +1,4 @@
-package com.shahaf.lettucecook.entity;
+package com.shahaf.lettucecook.entity.recipe;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,14 +7,12 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "ingredients")
+@Table(name = "instructions")
 @Data
-public class Ingredient {
+public class Instruction {
     @Id
     @GeneratedValue
     private Long id;
-    private String name;
-    private String unit;
-    private Float amount;
-
+    private Long index;
+    private String description;
 }

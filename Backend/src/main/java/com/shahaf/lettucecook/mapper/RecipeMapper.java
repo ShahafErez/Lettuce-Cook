@@ -1,7 +1,7 @@
 package com.shahaf.lettucecook.mapper;
 
-import com.shahaf.lettucecook.dto.RecipeCreationDto;
-import com.shahaf.lettucecook.entity.Recipe;
+import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.entity.recipe.Recipe;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

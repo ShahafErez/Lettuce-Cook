@@ -1,8 +1,19 @@
 package com.shahaf.lettucecook.exceptions;
 
-public class ResourceAlreadyExistsException extends RuntimeException {
+import lombok.Getter;
 
-    public ResourceAlreadyExistsException(String msg) {
-        super(msg);
+@Getter
+public class ResourceAlreadyExistsException extends RuntimeException {
+    private final ErrorMessages errorMessages;
+    private final String errorMessage;
+
+    public ResourceAlreadyExistsException(ErrorMessages errorMessages) {
+        this.errorMessages = errorMessages;
+        this.errorMessage = null;
+    }
+
+    public ResourceAlreadyExistsException(String errorMessage) {
+        this.errorMessage = errorMessage;
+        this.errorMessages = null;
     }
 }

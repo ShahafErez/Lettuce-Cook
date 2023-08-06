@@ -1,4 +1,4 @@
-package com.shahaf.lettucecook.entity;
+package com.shahaf.lettucecook.entity.recipe;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,7 +20,7 @@ public class Recipe {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "recipe_id")
     private List<Ingredient> ingredients;
-    @OneToMany(cascade = CascadeType.MERGE)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "recipe_id")
     private List<Instruction> instructions;
     private String pictureUrl;

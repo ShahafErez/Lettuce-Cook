@@ -3,6 +3,7 @@ package com.shahaf.lettucecook.service;
 import com.shahaf.lettucecook.dto.AuthenticationDto;
 import com.shahaf.lettucecook.dto.RegisterDto;
 import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
+import com.shahaf.lettucecook.exceptions.ErrorMessages;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.enums.Role;
 import com.shahaf.lettucecook.exceptions.AuthenticationException;
@@ -16,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -61,18 +64,18 @@ public class AuthenticationService {
     }
 
     private void usernameOrEmailExistsValidations(String username, String email) {
-        StringBuilder errorMessage = new StringBuilder();
-
+        Map<String, String> errorMap = new HashMap<>();
         if (userRepository.findByUsername(username).isPresent()) {
-            errorMessage.append(String.format("Username '%s' is already in use.", username));
+            errorMap.put("username", String.format("Username '%s' is already in use.", username));
         }
         if (userRepository.findByEmail(email).isPresent()) {
-            errorMessage.append(String.format("Email '%s' is already in use.", email));
+            errorMap.put("email", String.format("Email '%s' is already in use.", email));
         }
 
-        String finalErrorMessage = errorMessage.toString().trim();
-        if (!finalErrorMessage.isEmpty()) {
-            throw new ResourceAlreadyExistsException(finalErrorMessage);
+        if (!errorMap.isEmpty()) {
+            ErrorMessages errorMessages = new ErrorMessages();
+            errorMessages.setErrors(errorMap);
+            throw new ResourceAlreadyExistsException(errorMessages);
         }
     }
 
