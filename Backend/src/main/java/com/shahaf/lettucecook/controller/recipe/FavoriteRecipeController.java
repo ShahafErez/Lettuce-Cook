@@ -1,7 +1,7 @@
 package com.shahaf.lettucecook.controller.recipe;
 
 import com.shahaf.lettucecook.dto.recipe.FavoriteRecipeDto;
-import com.shahaf.lettucecook.entity.recipe.Favorite;
+import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.service.recipe.FavoriteRecipeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class FavoriteRecipeController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<List<Favorite>> addFavoriteRecipe(@PathVariable String username) {
+    public ResponseEntity<List<Recipe>> addFavoriteRecipe(@PathVariable String username) {
         return new ResponseEntity<>(favoriteRecipeService.getFavoritesByUser(username), HttpStatus.OK);
     }
 

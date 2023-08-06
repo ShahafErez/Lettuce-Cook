@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FavoriteRecipeService {
@@ -55,12 +56,12 @@ public class FavoriteRecipeService {
         favoriteRecipeRepository.deleteByRecipeIdAndUserId(recipeId, user.getId());
     }
 
-    public List<Favorite> getFavoritesByUser(String username) {
+    public List<Recipe> getFavoritesByUser(String username) {
         Long userId = userService.getUserByUsername(username).getId();
         Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(userId);
         if (!(favoritesList.isPresent())) {
             throw new ResourceNotFound(String.format("User %d doesn't have favorite recipes", userId));
         }
-        return favoritesList.get();
+        return favoritesList.get().stream().map(Favorite::getRecipe).collect(Collectors.toList());
     }
 }
