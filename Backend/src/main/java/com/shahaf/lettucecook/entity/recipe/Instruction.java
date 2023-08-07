@@ -13,6 +13,5 @@ public class Instruction {
     @Id
     @GeneratedValue
     private Long id;
-    private Long index;
     private String description;
 }
