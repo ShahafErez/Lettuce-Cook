@@ -29,8 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -100,6 +99,7 @@ class RecipesControllerTest {
 
     @Test
     void addRecipe() throws Exception {
+        recipesRepository.deleteAll(); // clearing the database from all recipes
         RecipeCreationDto recipeToAdd = createRecipeCreationDto();
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/recipes/add")
                         .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
@@ -107,6 +107,7 @@ class RecipesControllerTest {
                         .content(new ObjectMapper().writeValueAsString(recipeToAdd)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipe added successfully.")));
+        assertEquals(1, recipesRepository.findAll().size()); // only the newly added recipe should be in database
     }
 
     private RecipeCreationDto createRecipeCreationDto() {
@@ -127,7 +128,17 @@ class RecipesControllerTest {
     }
 
     @Test
-    void deleteRecipe() {
+    void deleteRecipe() throws Exception {
+        assertEquals(2, recipesRepository.findAll().size()); // verify that the repository has 2 recipes added at setup
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/recipes/" + recipe1Id)
+                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        assertEquals(1, recipesRepository.findAll().size());
+        assertFalse(recipesRepository.findById(recipe1Id).isPresent());
     }
 
     @AfterEach
