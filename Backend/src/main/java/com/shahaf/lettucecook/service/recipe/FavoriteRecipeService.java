@@ -27,9 +27,9 @@ public class FavoriteRecipeService {
 
     public void addFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
         User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
-        Recipe recipe = recipeGlobalService.getRecipeById(Long.valueOf(favoriteRecipeDto.getRecipeId()));
+        Recipe recipe = recipeGlobalService.getRecipeById(favoriteRecipeDto.getRecipeId());
         validateRecipeNotAddedAsFavorite(recipe.getId(), user.getId());
-        createNewFavoriteObject(user, recipe);
+        favoriteRecipeRepository.save(createNewFavoriteObject(user, recipe));
     }
 
     private void validateRecipeNotAddedAsFavorite(Long recipeId, Long userId) {
@@ -38,11 +38,11 @@ public class FavoriteRecipeService {
         }
     }
 
-    private void createNewFavoriteObject(User user, Recipe recipe) {
+    private Favorite createNewFavoriteObject(User user, Recipe recipe) {
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setRecipe(recipe);
-        favoriteRecipeRepository.save(favorite);
+        return favorite;
     }
 
     @Transactional

@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shahaf.lettucecook.dto.recipe.IngredientDto;
 import com.shahaf.lettucecook.dto.recipe.InstructionDto;
 import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Ingredient;
 import com.shahaf.lettucecook.entity.recipe.Instruction;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
+import com.shahaf.lettucecook.enums.Role;
+import com.shahaf.lettucecook.reposetory.UserRepository;
 import com.shahaf.lettucecook.reposetory.recipe.FavoriteRecipeRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +46,18 @@ class RecipesControllerTest {
     private RecipesRepository recipesRepository;
     @MockBean
     private FavoriteRecipeRepository favoriteRecipeRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     private static final String JWT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5MTQxNTY2NSwiZXhwIjoxNjkzNTYzMTQ4fQ.ycuIn9fMTjcneKOhGjZjA_yv7jotqqh00YgMOS-ROUg";
+
+    @BeforeEach
+    void setup() {
+        // setting a user for jwt authentication
+        String userEmail = "user@gmail.com";
+        User mockUser = new User(1L, "user", userEmail, "abc", Role.USER);
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(mockUser));
+    }
 
     @Test
     void getAllRecipes() throws Exception {
@@ -86,6 +100,7 @@ class RecipesControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get/1")
                         .contentType(MediaType.APPLICATION_JSON))
+                // TODO- change
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("recipe"))

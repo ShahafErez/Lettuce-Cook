@@ -24,16 +24,16 @@ public class FavoriteRecipeController {
         return new ResponseEntity<>("Recipes successfully added to favorites.", HttpStatus.CREATED);
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<List<Recipe>> addFavoriteRecipe(@PathVariable String username) {
+    @GetMapping("/get/{username}")
+    public ResponseEntity<List<Recipe>> getFavoritesByUser(@PathVariable String username) {
         return new ResponseEntity<>(favoriteRecipeService.getFavoritesByUser(username), HttpStatus.OK);
     }
 
     @DeleteMapping("/remove")
     public ResponseEntity<String> removeFavoriteRecipe(@Valid @RequestBody FavoriteRecipeDto favoriteRecipeDto) {
-        String recipeId = favoriteRecipeDto.getRecipeId();
+        Long recipeId = favoriteRecipeDto.getRecipeId();
         String username = favoriteRecipeDto.getUsername();
-        favoriteRecipeService.removeFavoriteRecipe(Long.valueOf(recipeId), username);
+        favoriteRecipeService.removeFavoriteRecipe(recipeId, username);
         return new ResponseEntity<>(String.format("Recipes %s successfully removed from favorites for user %s.", recipeId, username), HttpStatus.OK);
     }
 }
