@@ -37,7 +37,7 @@ public class RecipesController {
         return new ResponseEntity<>("Recipe added successfully. New recipe id: " + newSavedRecipe.getId(), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{recipeId}")
+    @DeleteMapping("/delete/{recipeId}")
     public ResponseEntity<String> deleteRecipe(@PathVariable Long recipeId) {
         recipeService.deleteRecipe(recipeId);
         return new ResponseEntity<>(String.format("Recipe %s deleted.", recipeId), HttpStatus.OK);

@@ -11,7 +11,6 @@ import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,11 +44,6 @@ class RecipesControllerTest {
 
     private static final String JWT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMUBnbWFpbC5jb20iLCJpYXQiOjE2OTEzNTk5MjAsImV4cCI6MTY5MzUwNzQwNH0.idX07t3feLJO0zHJdnokqMFM474nccCS8zpn5m8nTbY";
     private Long recipe1Id;
-
-    @BeforeEach
-    public void setUp() {
-        saveRecipesToRepository();
-    }
 
     private void saveRecipesToRepository() {
         Recipe recipe1 = new Recipe();
@@ -67,6 +63,7 @@ class RecipesControllerTest {
 
     @Test
     void getAllRecipes() throws Exception {
+        saveRecipesToRepository();
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get-all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -83,6 +80,7 @@ class RecipesControllerTest {
 
     @Test
     void getRecipeById() throws Exception {
+        saveRecipesToRepository();
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get/" + recipe1Id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -98,8 +96,15 @@ class RecipesControllerTest {
     }
 
     @Test
+    void getRecipeByIdRecipeNotExists() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(result -> assertEquals("Recipe not found with id: 1", Objects.requireNonNull(result.getResolvedException()).getMessage()));
+    }
+
+    @Test
     void addRecipe() throws Exception {
-        recipesRepository.deleteAll(); // clearing the database from all recipes
         RecipeCreationDto recipeToAdd = createRecipeCreationDto();
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/recipes/add")
                         .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
@@ -108,6 +113,25 @@ class RecipesControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipe added successfully.")));
         assertEquals(1, recipesRepository.findAll().size()); // only the newly added recipe should be in database
+    }
+
+    @Test
+    void addRecipeWithoutFields() throws Exception {
+        RecipeCreationDto recipeToAdd = new RecipeCreationDto();
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/recipes/add")
+                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(recipeToAdd)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> errorMessage = objectMapper.readValue(content, new TypeReference<>() {
+        });
+        assertEquals("must not be blank", errorMessage.get("name"));
+        assertEquals("must not be empty", errorMessage.get("instructions"));
+        assertEquals("must not be empty", errorMessage.get("ingredients"));
     }
 
     private RecipeCreationDto createRecipeCreationDto() {
@@ -129,9 +153,10 @@ class RecipesControllerTest {
 
     @Test
     void deleteRecipe() throws Exception {
+        saveRecipesToRepository();
         assertEquals(2, recipesRepository.findAll().size()); // verify that the repository has 2 recipes added at setup
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/recipes/" + recipe1Id)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/recipes/delete/" + recipe1Id)
                         .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -139,6 +164,15 @@ class RecipesControllerTest {
 
         assertEquals(1, recipesRepository.findAll().size());
         assertFalse(recipesRepository.findById(recipe1Id).isPresent());
+    }
+
+    @Test
+    void deleteRecipeByIdRecipeNotExists() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/recipes/delete/1")
+                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(result -> assertEquals("Recipe not found with id: 1", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @AfterEach
