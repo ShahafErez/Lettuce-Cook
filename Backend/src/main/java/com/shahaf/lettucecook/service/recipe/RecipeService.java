@@ -22,6 +22,9 @@ public class RecipeService {
         return recipesRepository.findAll();
     }
 
+    public Recipe getRecipeById(Long recipeId) {
+        return recipeGlobalService.getRecipeById(recipeId);
+    }
 
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) {
         Recipe recipeCreation = RecipeMapper.MAPPER.recipeDtoToRecipe(recipeCreationDto);
@@ -34,9 +37,5 @@ public class RecipeService {
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
         }
-    }
-
-    public Recipe getRecipeById(Long recipeId) {
-        return recipeGlobalService.getRecipeById(recipeId);
     }
 }

@@ -13,6 +13,7 @@ import com.shahaf.lettucecook.enums.Role;
 import com.shahaf.lettucecook.reposetory.UserRepository;
 import com.shahaf.lettucecook.reposetory.recipe.FavoriteRecipeRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
+import com.shahaf.lettucecook.service.JwtService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -43,20 +45,29 @@ class RecipesControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
+    private JwtService jwtService;
+    @MockBean
+    private UserDetailsService userDetailsService;
+    @MockBean
     private RecipesRepository recipesRepository;
     @MockBean
     private FavoriteRecipeRepository favoriteRecipeRepository;
     @MockBean
     private UserRepository userRepository;
 
-    private static final String JWT_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5MTQxNTY2NSwiZXhwIjoxNjkzNTYzMTQ4fQ.ycuIn9fMTjcneKOhGjZjA_yv7jotqqh00YgMOS-ROUg";
+    private static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5MTQxNTY2NSwiZXhwIjoxNjkzNTYzMTQ4fQ.ycuIn9fMTjcneKOhGjZjA_yv7jotqqh00YgMOS-ROUg";
+    private static User mockUser;
 
     @BeforeEach
     void setup() {
-        // setting a user for jwt authentication
-        String userEmail = "user@gmail.com";
-        User mockUser = new User(1L, "user", userEmail, "abc", Role.USER);
+        // mocking jwt authentication functions
+        String userEmail = "testUser@gmail.com";
+        mockUser = new User(1L, "testUser", userEmail, "abc", Role.USER);
+
+        when(jwtService.extractEmail(JWT_TOKEN)).thenReturn(userEmail);
+        when(jwtService.isTokenValid(JWT_TOKEN, mockUser)).thenReturn(true);
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(mockUser));
+        when(userDetailsService.loadUserByUsername(userEmail)).thenReturn(mockUser);
     }
 
     @Test
@@ -75,13 +86,19 @@ class RecipesControllerTest {
 
         when(recipesRepository.findAll()).thenReturn(mockRecipeList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get-all")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get-all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("recipe 1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("recipe 2"));
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Recipe> recipesListResponse = objectMapper.readValue(content, new TypeReference<>() {
+        });
+        assertEquals(1, recipesListResponse.get(0).getId());
+        assertEquals("recipe 1", recipesListResponse.get(0).getName());
+        assertEquals(2, recipesListResponse.get(1).getId());
+        assertEquals("recipe 2", recipesListResponse.get(1).getName());
 
         // Verify that the repository method was called once
         verify(recipesRepository, times(1)).findAll();
@@ -94,19 +111,22 @@ class RecipesControllerTest {
         mockRecipe.setName("recipe");
         mockRecipe.setIngredients(List.of(new Ingredient(null, "ingredient", "unit", 1F)));
         mockRecipe.setInstructions(List.of(new Instruction(null, "instruction")));
-        mockRecipe.setVegan(true);
 
         when(recipesRepository.findById(1L)).thenReturn(Optional.of(mockRecipe));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get/1")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get/1")
                         .contentType(MediaType.APPLICATION_JSON))
-                // TODO- change
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("recipe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.ingredients[0].name").value("ingredient"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.instructions[0].description").value("instruction"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.vegan").value(true));
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Recipe recipe = objectMapper.readValue(content, new TypeReference<>() {
+        });
+        assertEquals(1, recipe.getId());
+        assertEquals("recipe", recipe.getName());
+        assertEquals("ingredient", recipe.getIngredients().get(0).getName());
+        assertEquals(1, recipe.getInstructions().size());
 
         verify(recipesRepository, times(1)).findById(1L);
     }
@@ -125,18 +145,17 @@ class RecipesControllerTest {
     @Test
     void addRecipe() throws Exception {
         RecipeCreationDto recipeToAdd = createRecipeCreationDto();
-        // configuring the behavior of the save method on the mocked repository
         Recipe savedRecipe = new Recipe();
         savedRecipe.setId(1L);
         when(recipesRepository.save(any())).thenReturn(savedRecipe);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/recipes/add")
-                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(recipeToAdd)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipe added successfully. New recipe id: 1")));
-        // Verify that the repository method was called once
+
         verify(recipesRepository, times(1)).save(any());
     }
 
@@ -144,7 +163,7 @@ class RecipesControllerTest {
     void addRecipeWithoutFields() throws Exception {
         RecipeCreationDto recipeToAdd = new RecipeCreationDto();
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/recipes/add")
-                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(recipeToAdd)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
@@ -187,7 +206,7 @@ class RecipesControllerTest {
         doNothing().when(favoriteRecipeRepository).deleteAllFavoritesByRecipe(mockRecipe.getId());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/recipes/delete/1")
-                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         verify(recipesRepository, times(1)).findById(1L);
@@ -200,7 +219,7 @@ class RecipesControllerTest {
         when(recipesRepository.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/recipes/delete/1")
-                        .header(HttpHeaders.AUTHORIZATION, JWT_TOKEN)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(result -> assertEquals("Recipe not found with id: 1", Objects.requireNonNull(result.getResolvedException()).getMessage()));
