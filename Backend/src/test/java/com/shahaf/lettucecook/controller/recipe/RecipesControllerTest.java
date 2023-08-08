@@ -41,7 +41,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 class RecipesControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -92,15 +91,13 @@ class RecipesControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Recipe> recipesListResponse = objectMapper.readValue(content, new TypeReference<>() {
+        List<Recipe> recipesListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
         assertEquals(1, recipesListResponse.get(0).getId());
         assertEquals("recipe 1", recipesListResponse.get(0).getName());
         assertEquals(2, recipesListResponse.get(1).getId());
         assertEquals("recipe 2", recipesListResponse.get(1).getName());
 
-        // Verify that the repository method was called once
         verify(recipesRepository, times(1)).findAll();
     }
 
@@ -120,8 +117,7 @@ class RecipesControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Recipe recipe = objectMapper.readValue(content, new TypeReference<>() {
+        Recipe recipe = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
         assertEquals(1, recipe.getId());
         assertEquals("recipe", recipe.getName());
@@ -170,12 +166,11 @@ class RecipesControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> errorMessage = objectMapper.readValue(content, new TypeReference<>() {
+        Map<String, String> errorsResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
-        assertEquals("must not be blank", errorMessage.get("name"));
-        assertEquals("must not be empty", errorMessage.get("instructions"));
-        assertEquals("must not be empty", errorMessage.get("ingredients"));
+        assertEquals("must not be blank", errorsResponse.get("name"));
+        assertEquals("must not be empty", errorsResponse.get("instructions"));
+        assertEquals("must not be empty", errorsResponse.get("ingredients"));
     }
 
     private RecipeCreationDto createRecipeCreationDto() {

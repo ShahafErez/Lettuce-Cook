@@ -6,6 +6,7 @@ import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
 import com.shahaf.lettucecook.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,12 +22,11 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterDto registerDto) {
-        return ResponseEntity.ok(authenticationService.register(registerDto));
+        return new ResponseEntity<>(authenticationService.register(registerDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationDto authenticationDto) {
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationDto));
-
+        return new ResponseEntity<>(authenticationService.authenticate(authenticationDto), HttpStatus.OK);
     }
 }

@@ -3,7 +3,6 @@ package com.shahaf.lettucecook.service;
 import com.shahaf.lettucecook.dto.AuthenticationDto;
 import com.shahaf.lettucecook.dto.RegisterDto;
 import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
-import com.shahaf.lettucecook.exceptions.ErrorMessages;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.enums.Role;
 import com.shahaf.lettucecook.exceptions.AuthenticationException;
@@ -47,6 +46,19 @@ public class AuthenticationService {
                 .build();
     }
 
+    private void usernameOrEmailExistsValidations(String username, String email) {
+        Map<String, String> errorMap = new HashMap<>();
+        if (userRepository.findByUsername(username).isPresent()) {
+            errorMap.put("username", String.format("Username '%s' is already in use.", username));
+        }
+        if (userRepository.findByEmail(email).isPresent()) {
+            errorMap.put("email", String.format("Email '%s' is already in use.", email));
+        }
+        if (!errorMap.isEmpty()) {
+            throw new ResourceAlreadyExistsException(errorMap);
+        }
+    }
+
     public AuthenticationResponse authenticate(AuthenticationDto authenticationDto) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -62,21 +74,4 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
-
-    private void usernameOrEmailExistsValidations(String username, String email) {
-        Map<String, String> errorMap = new HashMap<>();
-        if (userRepository.findByUsername(username).isPresent()) {
-            errorMap.put("username", String.format("Username '%s' is already in use.", username));
-        }
-        if (userRepository.findByEmail(email).isPresent()) {
-            errorMap.put("email", String.format("Email '%s' is already in use.", email));
-        }
-
-        if (!errorMap.isEmpty()) {
-            ErrorMessages errorMessages = new ErrorMessages();
-            errorMessages.setErrors(errorMap);
-            throw new ResourceAlreadyExistsException(errorMessages);
-        }
-    }
-
 }
