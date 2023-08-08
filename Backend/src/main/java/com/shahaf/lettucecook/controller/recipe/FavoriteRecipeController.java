@@ -34,6 +34,6 @@ public class FavoriteRecipeController {
         Long recipeId = favoriteRecipeDto.getRecipeId();
         String username = favoriteRecipeDto.getUsername();
         favoriteRecipeService.removeFavoriteRecipe(recipeId, username);
-        return new ResponseEntity<>(String.format("Recipes %s successfully removed from favorites for user %s.", recipeId, username), HttpStatus.OK);
+        return new ResponseEntity<>(String.format("Recipes %d successfully removed from favorites for user %s.", recipeId, username), HttpStatus.OK);
     }
 }
