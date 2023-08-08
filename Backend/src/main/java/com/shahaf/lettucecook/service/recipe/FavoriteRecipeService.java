@@ -25,24 +25,33 @@ public class FavoriteRecipeService {
     @Autowired
     private UserService userService;
 
-    public void addFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
-        User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
-        Recipe recipe = recipeGlobalService.getRecipeById(Long.valueOf(favoriteRecipeDto.getRecipeId()));
-        validateRecipeNotAddedAsFavorite(recipe.getId(), user.getId());
-        createNewFavoriteObject(user, recipe);
+    public List<Recipe> getFavoritesByUser(String username) {
+        Long userId = userService.getUserByUsername(username).getId();
+        Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(userId);
+        if (!(favoritesList.isPresent())) {
+            throw new ResourceNotFound(String.format("User %s doesn't have favorite recipes", username));
+        }
+        return favoritesList.get().stream().map(Favorite::getRecipe).collect(Collectors.toList());
     }
 
-    private void validateRecipeNotAddedAsFavorite(Long recipeId, Long userId) {
+    public void addFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
+        User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
+        Recipe recipe = recipeGlobalService.getRecipeById(favoriteRecipeDto.getRecipeId());
+        validateRecipeNotAddedAsFavorite(recipe.getId(), user.getId(), favoriteRecipeDto.getUsername());
+        favoriteRecipeRepository.save(createNewFavoriteObject(user, recipe));
+    }
+
+    private void validateRecipeNotAddedAsFavorite(Long recipeId, Long userId, String username) {
         if (favoriteRecipeRepository.findByRecipeIdAndUserId(recipeId, userId).isPresent()) {
-            throw new ResourceAlreadyExistsException(String.format("Recipe %s already saved as favorite by user %s", recipeId, userId));
+            throw new ResourceAlreadyExistsException(String.format("Recipe %d already saved as favorite by user %s", recipeId, username));
         }
     }
 
-    private void createNewFavoriteObject(User user, Recipe recipe) {
+    private Favorite createNewFavoriteObject(User user, Recipe recipe) {
         Favorite favorite = new Favorite();
         favorite.setUser(user);
         favorite.setRecipe(recipe);
-        favoriteRecipeRepository.save(favorite);
+        return favorite;
     }
 
     @Transactional
@@ -51,17 +60,8 @@ public class FavoriteRecipeService {
     }
 
     @Transactional
-    public void removeFavoriteRecipe(Long recipeId, String username) {
-        User user = userService.getUserByUsername(username);
-        favoriteRecipeRepository.deleteByRecipeIdAndUserId(recipeId, user.getId());
-    }
-
-    public List<Recipe> getFavoritesByUser(String username) {
-        Long userId = userService.getUserByUsername(username).getId();
-        Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(userId);
-        if (!(favoritesList.isPresent())) {
-            throw new ResourceNotFound(String.format("User %d doesn't have favorite recipes", userId));
-        }
-        return favoritesList.get().stream().map(Favorite::getRecipe).collect(Collectors.toList());
+    public void removeFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
+        User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
+        favoriteRecipeRepository.deleteByRecipeIdAndUserId(favoriteRecipeDto.getRecipeId(), user.getId());
     }
 }
