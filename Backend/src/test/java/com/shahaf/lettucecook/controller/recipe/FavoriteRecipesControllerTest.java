@@ -84,8 +84,7 @@ class FavoriteRecipesControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Recipe> favoriteListResponse = objectMapper.readValue(content, new TypeReference<>() {
+        List<Recipe> favoriteListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
         assertEquals(1, favoriteListResponse.size());
         assertEquals("test recipe", favoriteListResponse.get(0).getName());
