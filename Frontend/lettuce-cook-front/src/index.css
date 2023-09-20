@@ -1,1 +1,12 @@
 /* Global styles for the entire application */
+
+body {
+  /* font-family: "Handlee", cursive; */
+  font-family: "Englebert", sans-serif;
+}
+
+p {
+  /* font-family: "Barlow", sans-serif; */
+  /* font-family: "Manrope", sans-serif; */
+  font-family: "Raleway", sans-serif;
+}
