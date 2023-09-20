@@ -24,3 +24,17 @@
   margin-left: 5px;
   margin-right: 3px;
 }
+
+/* Home Page */
+.recipes-group-title {
+  text-align: left;
+}
+
+/* Preview Recipe */
+.preview-card img {
+  border-radius: 5px;
+}
+
+.preview-card .diet img {
+  margin: 3px;
+}
