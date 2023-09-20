@@ -1,8 +1,11 @@
 import React from "react";
 import RecipePreview from "../components/RecipePreview";
 
+export const RecipeContext = React.createContext();
+
 export default function Home() {
   let recipe = {
+    id: 1,
     title: "food",
     vegeterian: true,
     vegan: true,
@@ -18,6 +21,11 @@ export default function Home() {
       <h2 className="recipes-group-title">Newest</h2>
       <div className="row row-cols-1 row-cols-md-4 g-4">
         <div className="col">
+          <RecipeContext.Provider value={{ ...recipe }}>
+            <RecipePreview />
+          </RecipeContext.Provider>
+        </div>
+        {/* <div className="col">
           <RecipePreview {...recipe} />
         </div>
         <div className="col">
@@ -25,10 +33,7 @@ export default function Home() {
         </div>
         <div className="col">
           <RecipePreview {...recipe} />
-        </div>
-        <div className="col">
-          <RecipePreview {...recipe} />
-        </div>
+        </div> */}
       </div>
     </React.Fragment>
   );

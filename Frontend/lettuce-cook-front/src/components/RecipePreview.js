@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { RecipeContext } from "../pages/Home";
 
-export default function RecipePreview(props) {
-  let { title, vegeterian, vegan, glutenFree, dairyFree, pictureUrl } = props;
+export default function RecipePreview() {
+  const recipe = useContext(RecipeContext);
+  let { id, title, vegeterian, vegan, glutenFree, dairyFree, pictureUrl } =
+    recipe;
 
   return (
     <section className="card preview-card">
