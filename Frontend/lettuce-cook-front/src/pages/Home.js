@@ -9,7 +9,7 @@ export default function Home() {
     title: "food",
     summary:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada pellentesque elit eget gravida. Risus nullam eget felis eget nunc. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sem et tortor consequat id.",
-    vegeterian: true,
+    vegetarian: true,
     vegan: true,
     glutenFree: true,
     dairyFree: true,

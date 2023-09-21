@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav id="navbar" className="navbar navbar-expand-lg bg-secondary">
       <div className="container">
         <a className="navbar-brand" href="/">
-          <img src="navbar-logo.png" alt="logo" height="40" />
+          <img src="/navbar-logo.png" alt="logo" height="40" />
         </a>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">

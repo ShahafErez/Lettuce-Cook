@@ -30,13 +30,18 @@
   text-align: left;
 }
 
+/* Diets */
+.diet img {
+  margin: 5px;
+}
+
+#recipe-page .diet {
+  margin-top: 10px;
+}
+
 /* Preview Recipe */
 .preview-card img {
   border-radius: 5px;
-}
-
-.preview-card .diet img {
-  margin: 5px;
 }
 
 .preview-card:hover {
@@ -59,9 +64,35 @@
   margin-bottom: 0px;
 }
 
-#recipe-page img {
+#recipe-page h1 {
+  color: #5ca43e;
+}
+
+#recipe-page .card-img-top {
   width: auto;
   height: 220px;
   margin-top: 10px;
   border-radius: 3px;
+}
+
+/* Ingredients and Instructions*/
+.ingredients,
+.instructions {
+  text-align: left;
+  margin-left: 10px;
+}
+
+.ingredients .ingredient-name {
+  font-weight: bold;
+}
+
+.instructions .instruction {
+  display: flex;
+}
+
+.instructions .step {
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 0px;
+  margin-right: 10px;
 }

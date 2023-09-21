@@ -1,5 +1,8 @@
 import React from "react";
 import { useParams } from "react-router";
+import Diets from "../components/Diets";
+import Ingredients from "../components/Ingredients";
+import Instructions from "../components/Instructions";
 
 export default function Recipe() {
   const recipeId = useParams().id;
@@ -8,8 +11,8 @@ export default function Recipe() {
     id: 1,
     title: "food",
     summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada pellentesque elit eget gravida. Risus nullam eget felis eget nunc. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sem et tortor consequat id.",
-    vegeterian: true,
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    vegetarian: true,
     vegan: true,
     glutenFree: true,
     dairyFree: true,
@@ -29,10 +32,6 @@ export default function Recipe() {
   let {
     title,
     summary,
-    vegeterian,
-    vegan,
-    glutenFree,
-    dairyFree,
     makingTime,
     serving,
     pictureUrl,
@@ -48,11 +47,11 @@ export default function Recipe() {
           <img src={pictureUrl} className="card-img-top" alt={title} />
         </div>
         <div className="col-8" style={{ textAlign: "left" }}>
-          <h2>{title}</h2>
+          <h1>{title}</h1>
           <p style={{ width: "90%" }}>{summary}</p>
 
+          {/* numeric information */}
           <div className="row recipe-numeric-info">
-            {/* numeric information */}
             <div className="col">
               <div className="number">{ingredients.length}</div>{" "}
               <p>ingredients</p>
@@ -60,8 +59,8 @@ export default function Recipe() {
             <div
               className="col"
               style={{
-                borderLeft: "1px solid #5ca43e",
-                borderRight: "1px solid #5ca43e",
+                borderLeft: "1px solid #d2e877",
+                borderRight: "1px solid #d2e877",
               }}
             >
               <div className="number">{makingTime}</div> <p>minutes</p>
@@ -70,20 +69,18 @@ export default function Recipe() {
               <div className="number">{serving}</div> <p>servings</p>
             </div>
           </div>
+
+          <Diets recipe={recipe} symbolSize="45px" />
         </div>
       </div>
 
       {/* ingredients and instructions */}
       <div className="row" style={{ marginTop: "25px" }}>
-        <div className="col-4" style={{ borderRight: "1px solid #d2e877" }}>
-          {ingredients.map((ingredient) => (
-            <div key={ingredient.id}>{ingredient.name}</div>
-          ))}
+        <div className="col-4" style={{ borderRight: "1px solid #5ca43e" }}>
+          <Ingredients ingredients={ingredients} />
         </div>
         <div className="col-8">
-          {instructions.map((instruction) => (
-            <div key={instruction.id}>{instruction.description}</div>
-          ))}
+          <Instructions instructions={instructions} />
         </div>
       </div>
     </div>
