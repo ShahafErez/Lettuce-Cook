@@ -7,7 +7,7 @@ export default function RecipePreview() {
   const recipe = useContext(RecipeContext);
   const navigate = useNavigate();
 
-  let { id, title, pictureUrl } = recipe;
+  let { id, name, pictureUrl } = recipe;
 
   return (
     <section
@@ -16,9 +16,9 @@ export default function RecipePreview() {
         navigate(`/recipe/${id}`);
       }}
     >
-      <img src={pictureUrl} className="card-img-top" alt={title} />
+      <img src={pictureUrl} className="card-img-top" alt={name} />
       <div className="card-body">
-        <h5 className="card-title">{title}</h5>
+        <h5 className="card-title">{name}</h5>
         <Diets recipe={recipe} symbolSize="40px" />
       </div>
     </section>
