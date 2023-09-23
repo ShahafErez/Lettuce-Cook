@@ -9,7 +9,9 @@ import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Ingredient;
 import com.shahaf.lettucecook.entity.recipe.Instruction;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
-import com.shahaf.lettucecook.enums.Role;
+import com.shahaf.lettucecook.enums.recipe.Category;
+import com.shahaf.lettucecook.enums.recipe.Unit;
+import com.shahaf.lettucecook.enums.users.Role;
 import com.shahaf.lettucecook.reposetory.UserRepository;
 import com.shahaf.lettucecook.reposetory.recipe.FavoriteRecipeRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
@@ -106,7 +108,7 @@ class RecipesControllerTest {
         Recipe mockRecipe = new Recipe();
         mockRecipe.setId(1L);
         mockRecipe.setName("recipe");
-        mockRecipe.setIngredients(List.of(new Ingredient(null, "ingredient", "unit", 1F)));
+        mockRecipe.setIngredients(List.of(new Ingredient(null, "ingredient", Unit.CUP, 1F)));
         mockRecipe.setInstructions(List.of(new Instruction(null, "instruction")));
 
         when(recipesRepository.findById(1L)).thenReturn(Optional.of(mockRecipe));
@@ -176,17 +178,21 @@ class RecipesControllerTest {
     private RecipeCreationDto createRecipeCreationDto() {
         RecipeCreationDto newRecipeDto = new RecipeCreationDto();
         newRecipeDto.setName("chocolate covered strawberries");
+        newRecipeDto.setSummary("strawberries covered by chocolate. perfect for snack or dessert");
         newRecipeDto.setVegetarian(true);
         newRecipeDto.setVegan(false);
         newRecipeDto.setGlutenFree(true);
         newRecipeDto.setDairyFree(false);
+        newRecipeDto.setMakingTime(10);
+        newRecipeDto.setServings(2);
+        newRecipeDto.setCategories(List.of(Category.DESSERT, Category.SNACK));
+        newRecipeDto.setPictureUrl("https://hips.hearstapps.com/del.h-cdn.co/assets/18/06/1600x1600/square-1518114769-delish-chocolate-covered-strawberries.jpg?resize=1200:*");
         newRecipeDto.setIngredients(List.of(
-                new IngredientDto("chocolate", "cup", 2F),
-                new IngredientDto("strawberries", "pieces", 10F)));
+                new IngredientDto("chocolate", Unit.CUP, 2F),
+                new IngredientDto("strawberries", Unit.GRAM, 10F)));
         newRecipeDto.setInstructions(List.of(
                 new InstructionDto("melt the chocolate"),
                 new InstructionDto("dip strawberries into chocolate")));
-        newRecipeDto.setPictureUrl("https://hips.hearstapps.com/del.h-cdn.co/assets/18/06/1600x1600/square-1518114769-delish-chocolate-covered-strawberries.jpg?resize=1200:*");
         return newRecipeDto;
     }
 

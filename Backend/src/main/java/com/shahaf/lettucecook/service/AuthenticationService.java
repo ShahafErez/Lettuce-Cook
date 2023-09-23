@@ -4,7 +4,7 @@ import com.shahaf.lettucecook.dto.AuthenticationDto;
 import com.shahaf.lettucecook.dto.RegisterDto;
 import com.shahaf.lettucecook.dto.response.AuthenticationResponse;
 import com.shahaf.lettucecook.entity.User;
-import com.shahaf.lettucecook.enums.Role;
+import com.shahaf.lettucecook.enums.users.Role;
 import com.shahaf.lettucecook.exceptions.AuthenticationException;
 import com.shahaf.lettucecook.exceptions.ResourceAlreadyExistsException;
 import com.shahaf.lettucecook.reposetory.UserRepository;
