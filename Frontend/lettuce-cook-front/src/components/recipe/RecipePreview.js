@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import Diets from "../components/Diets";
-import { RecipeContext } from "../pages/Home";
+import Diets from "../recipe/Diets";
 
-export default function RecipePreview() {
-  const recipe = useContext(RecipeContext);
+export default function RecipePreview(props) {
+  const recipe = props.recipe;
   const navigate = useNavigate();
 
   let { id, name, pictureUrl } = recipe;
@@ -13,6 +12,7 @@ export default function RecipePreview() {
     <section
       className="card preview-card"
       onClick={() => {
+        console.log("id ", id);
         navigate(`/recipe/${id}`);
       }}
     >

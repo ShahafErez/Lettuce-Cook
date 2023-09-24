@@ -7,8 +7,6 @@ public enum Category {
     DINNER,
     @JsonProperty("lunch")
     LUNCH,
-    @JsonProperty("breakfast")
-    BREAKFAST,
     @JsonProperty("salad")
     SALAD,
     @JsonProperty("snack")

@@ -1,1 +1,1 @@
-global.dataUrl = "http://localhost:8080";
+global.dataUrl = "http://localhost:8080/api/v1";

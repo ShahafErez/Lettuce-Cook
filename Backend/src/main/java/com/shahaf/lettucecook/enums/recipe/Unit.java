@@ -5,10 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum Unit {
     @JsonProperty("cup")
     CUP,
-    @JsonProperty("spoon")
-    SPOON,
+    @JsonProperty("tablespoon")
+    TABLESPOON,
+    @JsonProperty("teaspoon")
+    TEASPOON,
     @JsonProperty("piece")
     PIECE,
     @JsonProperty("gram")
-    GRAM;
+    GRAM,
+    @JsonProperty("kilogram")
+    KILOGRAM;
 }

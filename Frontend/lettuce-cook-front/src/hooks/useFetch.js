@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
 export default function useFetch(url) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
 
   const getData = useCallback(() => {
-    console.log("fetching ", url);
     fetch(url, {
       method: "get",
       headers: {
@@ -21,11 +21,12 @@ export default function useFetch(url) {
       })
       .then((json) => {
         setData(json);
+        setIsLoading(false);
       });
   }, [url]);
 
   useEffect(() => {
     getData();
   }, [url, getData]);
-  return { data: data };
+  return { isLoading, data };
 }
