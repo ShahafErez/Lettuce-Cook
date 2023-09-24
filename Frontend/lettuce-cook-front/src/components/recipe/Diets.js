@@ -1,7 +1,6 @@
 export default function Diets(props) {
   let { vegetarian, vegan, glutenFree, dairyFree } = props.recipe;
   let symbolSize = props.symbolSize;
-  //   let symbolSize = props.symbolSize;
 
   return (
     <div className="diet">

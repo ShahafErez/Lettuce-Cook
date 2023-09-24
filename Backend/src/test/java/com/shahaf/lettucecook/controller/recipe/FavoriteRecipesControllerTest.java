@@ -6,7 +6,7 @@ import com.shahaf.lettucecook.dto.recipe.FavoriteRecipeDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Favorite;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
-import com.shahaf.lettucecook.enums.Role;
+import com.shahaf.lettucecook.enums.users.Role;
 import com.shahaf.lettucecook.reposetory.UserRepository;
 import com.shahaf.lettucecook.reposetory.recipe.FavoriteRecipeRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;

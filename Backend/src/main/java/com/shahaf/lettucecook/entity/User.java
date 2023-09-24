@@ -1,6 +1,6 @@
 package com.shahaf.lettucecook.entity;
 
-import com.shahaf.lettucecook.enums.Role;
+import com.shahaf.lettucecook.enums.users.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

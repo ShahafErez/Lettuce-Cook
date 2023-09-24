@@ -1,53 +1,40 @@
 import React from "react";
 import { useParams } from "react-router";
-import Diets from "../components/Diets";
-import Ingredients from "../components/Ingredients";
-import Instructions from "../components/Instructions";
+import Loading from "../components/loading";
+import Diets from "../components/recipe/Diets";
+import Ingredients from "../components/recipe/Ingredients";
+import Instructions from "../components/recipe/Instructions";
+import useFetch from "../hooks/useFetch";
 
 export default function Recipe() {
   const recipeId = useParams().id;
+  const { isLoading, data } = useFetch(
+    `${global.dataUrl}/recipes/get/${recipeId}`
+  );
 
-  let recipe = {
-    id: 1,
-    title: "food",
-    summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    vegetarian: true,
-    vegan: true,
-    glutenFree: true,
-    dairyFree: true,
-    makingTime: 15,
-    serving: 1,
-    pictureUrl: "https://spoonacular.com/recipeImages/1098387-312x231.jpg",
-    ingredients: [
-      { id: 1, name: "apple", unit: "piece", amount: 4 },
-      { id: 2, name: "peanut butter", unit: "cup", amount: 2 },
-    ],
-    instructions: [
-      { id: 1, description: "make food" },
-      { id: 2, description: "eat food" },
-    ],
-  };
+  if (isLoading) {
+    return <Loading />;
+  }
 
   let {
-    title,
+    name,
     summary,
     makingTime,
-    serving,
+    servings,
     pictureUrl,
     ingredients,
     instructions,
-  } = recipe;
+  } = data;
 
   return (
     <div className="container" id="recipe-page">
       {/* recipe information */}
       <div className="row">
         <div className="col-4">
-          <img src={pictureUrl} className="card-img-top" alt={title} />
+          <img src={pictureUrl} className="card-img-top" alt={name} />
         </div>
         <div className="col-8" style={{ textAlign: "left" }}>
-          <h1>{title}</h1>
+          <h1>{name}</h1>
           <p style={{ width: "90%" }}>{summary}</p>
 
           {/* numeric information */}
@@ -66,11 +53,11 @@ export default function Recipe() {
               <div className="number">{makingTime}</div> <p>minutes</p>
             </div>
             <div className="col">
-              <div className="number">{serving}</div> <p>servings</p>
+              <div className="number">{servings}</div> <p>servings</p>
             </div>
           </div>
 
-          <Diets recipe={recipe} symbolSize="45px" />
+          <Diets recipe={data} symbolSize="45px" />
         </div>
       </div>
 

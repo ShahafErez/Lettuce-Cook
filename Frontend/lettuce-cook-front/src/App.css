@@ -40,6 +40,19 @@
 }
 
 /* Preview Recipe */
+
+.preview-card.card {
+  height: 290px;
+}
+
+.preview-card h5 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
 .preview-card img {
   border-radius: 5px;
 }
@@ -86,13 +99,7 @@
   font-weight: bold;
 }
 
-.instructions .instruction {
-  display: flex;
-}
-
 .instructions .step {
   font-weight: bold;
-  text-decoration: underline;
   margin-bottom: 0px;
-  margin-right: 10px;
 }

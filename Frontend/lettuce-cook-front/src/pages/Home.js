@@ -1,20 +1,16 @@
 import React from "react";
-import RecipePreview from "../components/RecipePreview";
-
-export const RecipeContext = React.createContext();
+import Loading from "../components/loading";
+import RecipePreview from "../components/recipe/RecipePreview";
+import useFetch from "../hooks/useFetch";
 
 export default function Home() {
-  let recipe = {
-    id: 1,
-    title: "food",
-    summary:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada pellentesque elit eget gravida. Risus nullam eget felis eget nunc. Porta non pulvinar neque laoreet suspendisse interdum consectetur libero. Sem et tortor consequat id.",
-    vegetarian: true,
-    vegan: true,
-    glutenFree: true,
-    dairyFree: true,
-    pictureUrl: "https://spoonacular.com/recipeImages/1098387-312x231.jpg",
-  };
+  const { isLoading, data } = useFetch(`${global.dataUrl}/recipes/get-all`);
+
+  console.log("loading ", isLoading);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <React.Fragment>
@@ -22,20 +18,11 @@ export default function Home() {
 
       <h2 className="recipes-group-title">Newest</h2>
       <div className="row row-cols-1 row-cols-md-4 g-4">
-        <div className="col">
-          <RecipeContext.Provider value={{ ...recipe }}>
-            <RecipePreview />
-          </RecipeContext.Provider>
-        </div>
-        {/* <div className="col">
-          <RecipePreview {...recipe} />
-        </div>
-        <div className="col">
-          <RecipePreview {...recipe} />
-        </div>
-        <div className="col">
-          <RecipePreview {...recipe} />
-        </div> */}
+        {data.map((recipe) => (
+          <div className="col" key={recipe.id}>
+            <RecipePreview recipe={recipe} />
+          </div>
+        ))}
       </div>
     </React.Fragment>
   );
