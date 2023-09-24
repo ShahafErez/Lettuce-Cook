@@ -14,6 +14,7 @@ public class Instruction {
     @Id
     @GeneratedValue
     private Long id;
+    private Integer index;
     @Column(columnDefinition = "TEXT")
     private String description;
 }

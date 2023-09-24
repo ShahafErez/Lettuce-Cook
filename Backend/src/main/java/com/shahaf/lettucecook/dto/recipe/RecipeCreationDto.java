@@ -25,7 +25,6 @@ public class RecipeCreationDto {
     private Integer makingTime;
     @Positive
     @Digits(integer = 5, fraction = 0)
-//    @Size(min = 1, message = "servings should be a natural number")
     @NotNull
     private Integer servings;
     private List<Category> categories;
