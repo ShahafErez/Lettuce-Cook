@@ -8,7 +8,6 @@ export default function Home() {
   const { isLoading, isError, data } = useFetch(
     `${global.dataUrl}/recipes/get-all`
   );
-
   if (isLoading) {
     return <Loading />;
   }
