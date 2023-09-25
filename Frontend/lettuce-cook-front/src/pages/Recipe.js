@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router";
-import Loading from "../components/loading";
+import Error from "../components/Error";
+import Loading from "../components/Loading";
 import Diets from "../components/recipe/Diets";
 import Ingredients from "../components/recipe/Ingredients";
 import Instructions from "../components/recipe/Instructions";
@@ -8,12 +9,16 @@ import useFetch from "../hooks/useFetch";
 
 export default function Recipe() {
   const recipeId = useParams().id;
-  const { isLoading, data } = useFetch(
+  const { isLoading, isError, data } = useFetch(
     `${global.dataUrl}/recipes/get/${recipeId}`
   );
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (isError) {
+    return <Error message={`for recipe ${recipeId}`} />;
   }
 
   let {
