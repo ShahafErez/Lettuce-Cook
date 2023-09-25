@@ -25,6 +25,16 @@
   margin-right: 3px;
 }
 
+/* Error */
+.error {
+  margin-top: 20px;
+  justify-items: center;
+  display: grid;
+}
+.error img {
+  width: auto;
+}
+
 /* Home Page */
 .recipes-group-title {
   text-align: left;

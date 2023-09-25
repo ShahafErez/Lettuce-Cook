@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 export default function useFetch(url) {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
   const getData = useCallback(() => {
     fetch(url, {
@@ -12,9 +13,9 @@ export default function useFetch(url) {
       },
     })
       .then((res) => {
-        console.log("res ", res);
         if (res.status < 200 || res.status >= 300) {
-          console.log("error ", res);
+          setIsLoading(false);
+          setIsError(true);
         } else {
           return res.json();
         }
@@ -22,11 +23,16 @@ export default function useFetch(url) {
       .then((json) => {
         setData(json);
         setIsLoading(false);
+      })
+      .catch((e) => {
+        setIsLoading(false);
+        setIsError(true);
+        console.error("An error occurred during the fetch: ", e);
       });
   }, [url]);
 
   useEffect(() => {
     getData();
   }, [url, getData]);
-  return { isLoading, data };
+  return { isLoading, isError, data };
 }
