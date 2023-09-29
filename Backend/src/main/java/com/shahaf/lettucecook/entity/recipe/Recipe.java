@@ -24,6 +24,7 @@ public class Recipe {
     private Integer servings;
     private List<Category> categories;
     private String pictureUrl;
+    private byte[] pictureData;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "recipe_id")
     private List<Ingredient> ingredients;
