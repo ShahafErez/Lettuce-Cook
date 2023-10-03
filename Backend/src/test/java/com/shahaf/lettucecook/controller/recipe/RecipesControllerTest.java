@@ -57,13 +57,12 @@ class RecipesControllerTest {
     private UserRepository userRepository;
 
     private static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsImlhdCI6MTY5MTQxNTY2NSwiZXhwIjoxNjkzNTYzMTQ4fQ.ycuIn9fMTjcneKOhGjZjA_yv7jotqqh00YgMOS-ROUg";
-    private static User mockUser;
 
     @BeforeEach
     void setup() {
         // mocking jwt authentication functions
         String userEmail = "testUser@gmail.com";
-        mockUser = new User(1L, "testUser", userEmail, "abc", Role.USER);
+        User mockUser = new User(1L, "testUser", userEmail, "abc", Role.USER);
 
         when(jwtService.extractEmail(JWT_TOKEN)).thenReturn(userEmail);
         when(jwtService.isTokenValid(JWT_TOKEN, mockUser)).thenReturn(true);
@@ -109,7 +108,7 @@ class RecipesControllerTest {
         mockRecipe.setId(1L);
         mockRecipe.setName("recipe");
         mockRecipe.setIngredients(List.of(new Ingredient(null, "ingredient", Unit.CUP, 1F)));
-        mockRecipe.setInstructions(List.of(new Instruction(null, "instruction")));
+        mockRecipe.setInstructions(List.of(new Instruction(null, 1, "instruction")));
 
         when(recipesRepository.findById(1L)).thenReturn(Optional.of(mockRecipe));
 
@@ -191,8 +190,8 @@ class RecipesControllerTest {
                 new IngredientDto("chocolate", Unit.CUP, 2F),
                 new IngredientDto("strawberries", Unit.GRAM, 10F)));
         newRecipeDto.setInstructions(List.of(
-                new InstructionDto("melt the chocolate"),
-                new InstructionDto("dip strawberries into chocolate")));
+                new InstructionDto(1, "melt the chocolate"),
+                new InstructionDto(2, "dip strawberries into chocolate")));
         return newRecipeDto;
     }
 
