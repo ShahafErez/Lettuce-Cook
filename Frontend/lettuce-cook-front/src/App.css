@@ -137,3 +137,14 @@
   margin-top: 22px;
   margin-bottom: 10px;
 }
+
+.show-password-icon {
+  top: 5px;
+  font-size: 18px;
+  position: absolute;
+  right: 10px;
+}
+
+.show-password-icon:hover {
+  cursor: pointer;
+}

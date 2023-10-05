@@ -2,11 +2,16 @@ import { useState } from "react";
 
 export default function Register() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState(null);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState(null);
+  const [email, setEmail] = useState({ email: "", error: null });
+  const [password, setPassword] = useState({
+    password: "",
+    show: false,
+  });
+  const [confirmPassword, setConfirmPassword] = useState({
+    confirmPassword: "",
+    error: null,
+    show: false,
+  });
 
   function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
@@ -14,22 +19,36 @@ export default function Register() {
 
   function handleEmailChange(event) {
     let currentEmail = event.target.value;
-    if (!isValidEmail(currentEmail)) {
-      setEmailError("Email is invalid");
+    if (isValidEmail(currentEmail)) {
+      setEmail({ ...email, error: null });
     } else {
-      setEmailError(null);
+      setEmail({ ...email, error: "Email is invalid" });
     }
-    setEmail(currentEmail);
+    setEmail({ ...email, email: currentEmail });
   }
 
   function handleconfirmPasswordChange(event) {
     let currentConfirmPassword = event.target.value;
     if (currentConfirmPassword === password) {
-      setConfirmPasswordError(null);
+      setConfirmPassword({ ...confirmPassword, error: null });
     } else {
-      setConfirmPasswordError("Password confirmation does not match");
+      setConfirmPassword({
+        ...confirmPassword,
+        error: "Password confirmation does not match",
+      });
     }
-    setConfirmPassword(currentConfirmPassword);
+    setConfirmPassword({
+      ...confirmPassword,
+      confirmPassword: currentConfirmPassword,
+    });
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log("username ", username);
+    console.log("email ", email.email);
+    console.log("password ", password.password);
+    console.log("confirm password ", confirmPassword.confirmPassword);
   }
 
   return (
@@ -50,8 +69,8 @@ export default function Register() {
             type="text"
             autoComplete="off"
             value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
+            onChange={(event) => {
+              setUsername(event.target.value);
             }}
           />
         </div>
@@ -69,11 +88,11 @@ export default function Register() {
             placeholder="Email address"
             type="email"
             autoComplete="on"
-            value={email}
+            value={email.email}
             onChange={handleEmailChange}
           />
         </div>
-        {emailError && <div className="error-message">{emailError}</div>}
+        {email.error && <div className="error-message">{email.error}</div>}
 
         {/* password */}
         <div className="form-group input-group">
@@ -86,13 +105,28 @@ export default function Register() {
             name="password"
             className="form-control"
             placeholder="Create password"
-            type="password"
+            type={password.show ? "text" : "password"}
             autoComplete="off"
-            value={password}
+            value={password.password}
             onChange={(e) => {
-              setPassword(e.target.value);
+              setPassword({ ...password, password: e.target.value });
             }}
           />
+          <span
+            className="show-password-icon"
+            onClick={() => {
+              setPassword({
+                ...password,
+                show: !password.show,
+              });
+            }}
+          >
+            {password.show ? (
+              <i className="bi bi-eye-slash"></i>
+            ) : (
+              <i className="bi bi-eye"></i>
+            )}
+          </span>
         </div>
 
         <div className="form-group input-group">
@@ -105,24 +139,43 @@ export default function Register() {
             name="confirm-password"
             className="form-control"
             placeholder="Confirm password"
-            type="password"
-            value={confirmPassword}
+            type={confirmPassword.show ? "text" : "password"}
+            value={confirmPassword.confirmPassword}
             autoComplete="off"
             onChange={handleconfirmPasswordChange}
           />
+          <span
+            className="show-password-icon"
+            onClick={() => {
+              setConfirmPassword({
+                ...confirmPassword,
+                show: !confirmPassword.show,
+              });
+            }}
+          >
+            {confirmPassword.show ? (
+              <i className="bi bi-eye-slash"></i>
+            ) : (
+              <i className="bi bi-eye"></i>
+            )}
+          </span>
         </div>
-        {confirmPasswordError && (
-          <div className="error-message">{confirmPasswordError}</div>
+        {confirmPassword.error && (
+          <div className="error-message">{confirmPassword.error}</div>
         )}
 
         <div className="form-group">
           {username &&
-          email &&
-          password &&
-          confirmPassword &&
-          !emailError &&
-          !confirmPasswordError ? (
-            <button type="submit" className="btn btn-primary btn-block">
+          email.email &&
+          password.password &&
+          confirmPassword.confirmPassword &&
+          !email.error &&
+          !confirmPassword.error ? (
+            <button
+              type="submit"
+              className="btn btn-primary btn-block"
+              onClick={handleSubmit}
+            >
               Create Account
             </button>
           ) : (
