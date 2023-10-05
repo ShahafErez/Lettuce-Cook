@@ -14,7 +14,7 @@ export default function Home() {
 
   return (
     <React.Fragment>
-      <img src="logo.png" alt="logo" height="200" />
+      <img src="/images/logo.png" alt="logo" height="200" />
 
       {isError ? (
         <Error message={"for all recipes"} style={{ textAlign: "center" }} />
