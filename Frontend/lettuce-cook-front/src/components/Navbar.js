@@ -19,6 +19,19 @@ export default function Navbar() {
                 Search
               </a>
             </li>
+
+            <span className="navbar-users">
+              <li className="nav-item">
+                <a className="nav-link" href="/login">
+                  Login
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="/register">
+                  Register
+                </a>
+              </li>
+            </span>
           </ul>
         </div>
       </div>

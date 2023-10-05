@@ -2,14 +2,14 @@ import { useState } from "react";
 
 export default function Register() {
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState({ email: "", error: null });
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({ email: null, confirmPassword: null });
   const [password, setPassword] = useState({
     password: "",
     show: false,
   });
   const [confirmPassword, setConfirmPassword] = useState({
     confirmPassword: "",
-    error: null,
     show: false,
   });
 
@@ -20,33 +20,51 @@ export default function Register() {
   function handleEmailChange(event) {
     let currentEmail = event.target.value;
     if (isValidEmail(currentEmail)) {
-      setEmail({ ...email, error: null });
+      setErrors({ ...errors, email: null });
     } else {
-      setEmail({ ...email, error: "Email is invalid" });
+      setErrors({ ...errors, email: "Email is invalid" });
     }
-    setEmail({ ...email, email: currentEmail });
+    setEmail(currentEmail);
+  }
+
+  function handlePasswordChange(event) {
+    let currentPassword = event.target.value;
+    if (confirmPassword.confirmPassword) {
+      validatePasswordsMatching(
+        currentPassword,
+        confirmPassword.confirmPassword
+      );
+    }
+    setPassword({
+      ...password,
+      password: currentPassword,
+    });
   }
 
   function handleconfirmPasswordChange(event) {
     let currentConfirmPassword = event.target.value;
-    if (currentConfirmPassword === password) {
-      setConfirmPassword({ ...confirmPassword, error: null });
-    } else {
-      setConfirmPassword({
-        ...confirmPassword,
-        error: "Password confirmation does not match",
-      });
-    }
+    validatePasswordsMatching(password.password, currentConfirmPassword);
     setConfirmPassword({
       ...confirmPassword,
       confirmPassword: currentConfirmPassword,
     });
   }
 
+  function validatePasswordsMatching(password, confirmationPassword) {
+    if (password === confirmationPassword) {
+      setErrors({ ...errors, confirmPassword: null });
+    } else {
+      setErrors({
+        ...errors,
+        confirmPassword: "Password confirmation does not match",
+      });
+    }
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
     console.log("username ", username);
-    console.log("email ", email.email);
+    console.log("email ", email);
     console.log("password ", password.password);
     console.log("confirm password ", confirmPassword.confirmPassword);
   }
@@ -88,11 +106,11 @@ export default function Register() {
             placeholder="Email address"
             type="email"
             autoComplete="on"
-            value={email.email}
+            value={email}
             onChange={handleEmailChange}
           />
         </div>
-        {email.error && <div className="error-message">{email.error}</div>}
+        {errors.email && <div className="error-message">{errors.email}</div>}
 
         {/* password */}
         <div className="form-group input-group">
@@ -108,9 +126,7 @@ export default function Register() {
             type={password.show ? "text" : "password"}
             autoComplete="off"
             value={password.password}
-            onChange={(e) => {
-              setPassword({ ...password, password: e.target.value });
-            }}
+            onChange={handlePasswordChange}
           />
           <span
             className="show-password-icon"
@@ -160,17 +176,17 @@ export default function Register() {
             )}
           </span>
         </div>
-        {confirmPassword.error && (
-          <div className="error-message">{confirmPassword.error}</div>
+        {errors.confirmPassword && (
+          <div className="error-message">{errors.confirmPassword}</div>
         )}
 
         <div className="form-group">
           {username &&
-          email.email &&
+          email &&
           password.password &&
           confirmPassword.confirmPassword &&
-          !email.error &&
-          !confirmPassword.error ? (
+          !errors.email &&
+          !errors.confirmPassword ? (
             <button
               type="submit"
               className="btn btn-primary btn-block"

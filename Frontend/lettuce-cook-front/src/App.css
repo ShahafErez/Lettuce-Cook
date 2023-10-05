@@ -25,6 +25,12 @@
   margin-right: 3px;
 }
 
+.navbar-users {
+  position: absolute;
+  display: flex;
+  right: 20px;
+}
+
 /* Error */
 .error {
   margin-top: 20px;
@@ -127,6 +133,7 @@
 }
 
 .users-pages .error-message {
+  position: absolute;
   font-size: 15px;
   color: rgb(176, 15, 15);
   margin-top: 0px;
