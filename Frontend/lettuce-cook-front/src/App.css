@@ -25,6 +25,12 @@
   margin-right: 3px;
 }
 
+.navbar-users {
+  position: absolute;
+  display: flex;
+  right: 20px;
+}
+
 /* Error */
 .error {
   margin-top: 20px;
@@ -87,7 +93,8 @@
   margin-bottom: 0px;
 }
 
-#recipe-page h1 {
+#recipe-page h1,
+.users-pages h1 {
   color: #5ca43e;
 }
 
@@ -112,4 +119,39 @@
 .instructions .step {
   font-weight: bold;
   margin-bottom: 0px;
+}
+
+/* Register and Login */
+
+.users-pages form {
+  margin: auto;
+  width: 70%;
+}
+
+.users-pages .form-group.input-group {
+  margin-top: 22px;
+}
+
+.users-pages .error-message {
+  position: absolute;
+  font-size: 15px;
+  color: rgb(176, 15, 15);
+  margin-top: 0px;
+  text-align: left;
+}
+
+.users-pages .form-group button {
+  margin-top: 22px;
+  margin-bottom: 10px;
+}
+
+.show-password-icon {
+  top: 5px;
+  font-size: 18px;
+  position: absolute;
+  right: 10px;
+}
+
+.show-password-icon:hover {
+  cursor: pointer;
 }

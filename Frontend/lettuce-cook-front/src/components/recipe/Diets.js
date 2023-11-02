@@ -6,18 +6,23 @@ export default function Diets(props) {
     <div className="diet">
       {vegetarian && (
         <img
-          src="/vegetarian.png"
+          src="/images/vegetarian.png"
           alt="vegetarian"
           title="vegetarian"
           height={symbolSize}
         />
       )}
       {vegan && (
-        <img src="/vegan.png" alt="vegan" title="vegan" height={symbolSize} />
+        <img
+          src="/images/vegan.png"
+          alt="vegan"
+          title="vegan"
+          height={symbolSize}
+        />
       )}
       {glutenFree && (
         <img
-          src="/gluten-free.png"
+          src="/images/gluten-free.png"
           alt="gluten-free"
           title="gluten free"
           height={symbolSize}
@@ -25,7 +30,7 @@ export default function Diets(props) {
       )}
       {dairyFree && (
         <img
-          src="/dairy-free.png"
+          src="/images/dairy-free.png"
           alt="dairy-free"
           title="dairy free"
           height={symbolSize}
