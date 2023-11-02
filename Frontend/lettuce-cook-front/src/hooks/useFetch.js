@@ -5,13 +5,12 @@ export default function useFetch(url) {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
-  const getData = useCallback(() => {
+  const getRequest = useCallback(() => {
     fetch(url, {
-      method: "get",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      withCredentials: true,
     })
       .then((res) => {
         if (res.status < 200 || res.status >= 300) {
@@ -28,12 +27,12 @@ export default function useFetch(url) {
       .catch((e) => {
         setIsLoading(false);
         setIsError(true);
-        console.error("An error occurred during the fetch: ", e);
+        console.error("An error occurred during get request: ", e);
       });
   }, [url]);
 
   useEffect(() => {
-    getData();
-  }, [url, getData]);
+    getRequest();
+  }, [url, getRequest]);
   return { isLoading, isError, data };
 }

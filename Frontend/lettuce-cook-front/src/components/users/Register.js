@@ -12,6 +12,10 @@ export default function Register() {
     confirmPassword: "",
     show: false,
   });
+  const [responseMessage, setResponseMessage] = useState({
+    message: "",
+    status: "",
+  });
 
   function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
@@ -61,12 +65,68 @@ export default function Register() {
     }
   }
 
-  function handleSubmit(event) {
+  async function registerRequest() {
+    let isRegisteredSuccessfully = false;
+    let response = null;
+
+    let body = {
+      username: username,
+      email: email,
+      password: password.password,
+    };
+
+    await fetch(`${global.dataUrl}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      withCredentials: true,
+    })
+      .then((res) => {
+        if (res.status === 201) {
+          isRegisteredSuccessfully = true;
+        }
+        return res.json();
+      })
+      .then((json) => {
+        response = json;
+      })
+      .catch((e) => {
+        console.error("An error occurred during post request: ", e);
+      });
+    return { isRegisteredSuccessfully, response };
+  }
+
+  async function handleSubmit(event) {
     event.preventDefault();
-    console.log("username ", username);
-    console.log("email ", email);
-    console.log("password ", password.password);
-    console.log("confirm password ", confirmPassword.confirmPassword);
+    const { isRegisteredSuccessfully, response } = await registerRequest();
+
+    if (isRegisteredSuccessfully) {
+      setResponseMessage({
+        message: "Acount created successfully",
+        status: "success",
+      });
+      resetFormValues();
+    } else {
+      setResponseMessage({
+        message: Object.values(response).join(" "),
+        status: "failure",
+      });
+    }
+  }
+
+  function resetFormValues() {
+    setUsername("");
+    setEmail("");
+    setPassword({
+      password: "",
+      show: false,
+    });
+    setConfirmPassword({
+      confirmPassword: "",
+      show: false,
+    });
   }
 
   return (
@@ -203,7 +263,14 @@ export default function Register() {
             </button>
           )}
         </div>
-        <p className="text-center">
+
+        {responseMessage.message && (
+          <p className={`${responseMessage.status} response-message`}>
+            {responseMessage.message}
+          </p>
+        )}
+
+        <p className="text-center" style={{ marginTop: "45px" }}>
           Have an account? <a href="/login">Log In</a>
         </p>
       </form>
