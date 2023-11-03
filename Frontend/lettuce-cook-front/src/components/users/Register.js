@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({ email: null, confirmPassword: null });
@@ -65,22 +68,16 @@ export default function Register() {
     }
   }
 
-  async function registerRequest() {
+  async function registerRequest(registerBody) {
     let isRegisteredSuccessfully = false;
     let response = null;
-
-    let body = {
-      username: username,
-      email: email,
-      password: password.password,
-    };
 
     await fetch(`${global.dataUrl}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(registerBody),
       withCredentials: true,
     })
       .then((res) => {
@@ -100,33 +97,25 @@ export default function Register() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const { isRegisteredSuccessfully, response } = await registerRequest();
+
+    let registerBody = {
+      username: username,
+      email: email,
+      password: password.password,
+    };
+
+    const { isRegisteredSuccessfully, response } = await registerRequest(
+      registerBody
+    );
 
     if (isRegisteredSuccessfully) {
-      setResponseMessage({
-        message: "Acount created successfully",
-        status: "success",
-      });
-      resetFormValues();
+      navigate("/");
     } else {
       setResponseMessage({
         message: Object.values(response).join(" "),
         status: "failure",
       });
     }
-  }
-
-  function resetFormValues() {
-    setUsername("");
-    setEmail("");
-    setPassword({
-      password: "",
-      show: false,
-    });
-    setConfirmPassword({
-      confirmPassword: "",
-      show: false,
-    });
   }
 
   return (
