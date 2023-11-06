@@ -57,10 +57,6 @@
 
 /* Preview Recipe */
 
-.preview-card.card {
-  height: 290px;
-}
-
 .preview-card h5 {
   overflow: hidden;
   display: -webkit-box;
@@ -76,6 +72,21 @@
 .preview-card:hover {
   cursor: pointer;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Favorite */
+
+.favorite {
+  color: white;
+  font-size: 40px;
+  position: absolute;
+  bottom: 0px;
+  right: 10px;
 }
 
 /* Recipe Page */

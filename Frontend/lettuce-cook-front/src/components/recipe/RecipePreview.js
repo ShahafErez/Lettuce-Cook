@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Diets from "../recipe/Diets";
+import Favorite from "../recipe/Favorite";
 
 export default function RecipePreview(props) {
   const recipe = props.recipe;
@@ -24,7 +25,10 @@ export default function RecipePreview(props) {
         navigate(`/recipe/${id}`);
       }}
     >
-      {imageUrl && <img src={imageUrl} className="card-img-top" alt={name} />}
+      <div className="image-container">
+        {imageUrl && <img src={imageUrl} className="card-img-top" alt={name} />}
+        <Favorite />
+      </div>
       <div className="card-body">
         <h5 className="card-title">{name}</h5>
         <Diets recipe={recipe} symbolSize="40px" />
