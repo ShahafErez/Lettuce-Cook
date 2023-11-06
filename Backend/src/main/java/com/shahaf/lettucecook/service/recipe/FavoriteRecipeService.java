@@ -64,4 +64,8 @@ public class FavoriteRecipeService {
         User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
         favoriteRecipeRepository.deleteByRecipeIdAndUserId(favoriteRecipeDto.getRecipeId(), user.getId());
     }
+
+    public void deleteAllFavorites() {
+        favoriteRecipeRepository.deleteAll();
+    }
 }
