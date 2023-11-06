@@ -41,4 +41,9 @@ public class RecipeService {
             recipesRepository.deleteById(recipeId);
         }
     }
+
+    public void deleteAllRecipes() {
+        favoriteRecipeService.deleteAllFavorites();
+        recipesRepository.deleteAll();
+    }
 }

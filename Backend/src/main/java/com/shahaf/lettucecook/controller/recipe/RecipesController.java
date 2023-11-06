@@ -45,4 +45,10 @@ public class RecipesController {
         return new ResponseEntity<>(String.format("Recipe %s deleted.", recipeId), HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<String> deleteAllRecipes() {
+        recipeService.deleteAllRecipes();
+        return new ResponseEntity<>("Deleted all recipes.", HttpStatus.OK);
+    }
+
 }
