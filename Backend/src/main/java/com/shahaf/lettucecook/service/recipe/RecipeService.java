@@ -1,14 +1,18 @@
 package com.shahaf.lettucecook.service.recipe;
 
 import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
+import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
+import com.shahaf.lettucecook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RecipeService {
@@ -19,14 +23,28 @@ public class RecipeService {
     @Autowired
     private FavoriteRecipeService favoriteRecipeService;
     @Autowired
+    private UserService userService;
+    @Autowired
     private RecipeMapper recipeMapper;
 
-    public List<Recipe> getAll() {
-        return recipesRepository.findAll();
+    public List<RecipeUserDto> getAll() {
+        User user = userService.getUserFromToken();
+
+        return recipesRepository.findAll().stream()
+                .map(recipe -> mapRecipeToRecipeUserDto(recipe, user))
+                .collect(Collectors.toList());
     }
 
-    public Recipe getRecipeById(Long recipeId) {
-        return recipeGlobalService.getRecipeById(recipeId);
+    private RecipeUserDto mapRecipeToRecipeUserDto(Recipe recipe, User user) {
+        boolean isFavorite = (user != null) && favoriteRecipeService.isFavorite(recipe.getId(), user);
+        return new RecipeUserDto(recipe, isFavorite);
+    }
+
+    public RecipeUserDto getRecipeById(Long recipeId) {
+        User user = userService.getUserFromToken();
+        Recipe recipe = recipeGlobalService.getRecipeById(recipeId);
+        boolean isFavorite = (user != null) && favoriteRecipeService.isFavorite(recipeId, user);
+        return new RecipeUserDto(recipe, isFavorite);
     }
 
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {

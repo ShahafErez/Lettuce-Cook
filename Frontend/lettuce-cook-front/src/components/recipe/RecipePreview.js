@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Diets from "../recipe/Diets";
-import Favorite from "../recipe/Favorite";
 
 export default function RecipePreview(props) {
-  const recipe = props.recipe;
+  const recipe = props.recipeInfo.recipe;
+  const isFavoriteByUser = props.recipeInfo.isFavoriteByUser;
+
   const navigate = useNavigate();
 
   const { id, name, pictureData } = recipe;
@@ -27,7 +28,9 @@ export default function RecipePreview(props) {
     >
       <div className="image-container">
         {imageUrl && <img src={imageUrl} className="card-img-top" alt={name} />}
-        <Favorite />
+        <div className="favorite">
+          {isFavoriteByUser && <i className="bi bi-suit-heart-fill"></i>}
+        </div>
       </div>
       <div className="card-body">
         <h5 className="card-title">{name}</h5>

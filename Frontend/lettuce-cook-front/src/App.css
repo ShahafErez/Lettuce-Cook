@@ -80,13 +80,22 @@
 }
 
 /* Favorite */
-
-.favorite {
+.preview-card .favorite {
   color: white;
-  font-size: 40px;
+  font-size: 25px;
   position: absolute;
   bottom: 0px;
   right: 10px;
+}
+
+#recipe-page .favorite {
+  font-size: 30px;
+  color: #f28242;
+  width: fit-content;
+}
+
+#recipe-page .favorite:hover {
+  cursor: pointer;
 }
 
 /* Recipe Page */
@@ -107,6 +116,10 @@
 #recipe-page h1,
 .users-pages h1 {
   color: #5ca43e;
+}
+
+#recipe-page h1 {
+  margin-bottom: 0px;
 }
 
 #recipe-page .card-img-top {
