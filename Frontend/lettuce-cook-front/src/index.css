@@ -22,3 +22,11 @@ h5 {
   margin: 0 auto;
   padding: 15px;
 }
+
+.success {
+  color: green;
+}
+
+.failure {
+  color: red;
+}
