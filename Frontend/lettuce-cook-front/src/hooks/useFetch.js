@@ -7,7 +7,7 @@ export default function useFetch(url) {
 
   const getRequest = useCallback(() => {
     const headers = new Headers();
-    headers.append("Content-Type", "image/jpeg");
+    headers.append("Content-Type", "application/json");
 
     if (localStorage.getItem("token")) {
       headers.append(
