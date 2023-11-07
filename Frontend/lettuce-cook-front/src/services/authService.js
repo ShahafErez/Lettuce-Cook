@@ -33,7 +33,7 @@ export const login = async (email, password) => {
   return { isLoggedInSuccessfully: isLoggedInSuccessfully, response };
 };
 
-export const register = async (registerBody) => {
+export const register = async (body) => {
   let isRegisteredSuccessfully = false;
   let response = null;
 
@@ -42,7 +42,7 @@ export const register = async (registerBody) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(registerBody),
+    body: JSON.stringify(body),
     withCredentials: true,
   })
     .then((res) => {
@@ -65,4 +65,9 @@ export const register = async (registerBody) => {
   }
 
   return { isRegisteredSuccessfully, response };
+};
+
+export const logout = async () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("username");
 };

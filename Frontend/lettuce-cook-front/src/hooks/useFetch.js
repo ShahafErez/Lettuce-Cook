@@ -6,12 +6,19 @@ export default function useFetch(url) {
   const [isError, setIsError] = useState(false);
 
   const getRequest = useCallback(() => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+
+    if (localStorage.getItem("token")) {
+      headers.append(
+        "Authorization",
+        `Bearer ${localStorage.getItem("token")}`
+      );
+    }
+
     fetch(url, {
       method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
+      headers: headers,
     })
       .then((res) => {
         if (res.status < 200 || res.status >= 300) {

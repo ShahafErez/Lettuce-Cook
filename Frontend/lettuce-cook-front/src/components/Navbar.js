@@ -1,4 +1,5 @@
 import React from "react";
+import { logout } from "../services/authService";
 
 export default function Navbar() {
   const username = localStorage.getItem("username");
@@ -21,14 +22,25 @@ export default function Navbar() {
                 Search
               </a>
             </li>
+            {username && (
+              <li className="nav-item">
+                <a className="nav-link" href="/favorites">
+                  Favorites
+                </a>
+              </li>
+            )}
 
             {username ? (
               <span className="navbar-users">
                 <li className="nav-item">
-                  <p>hello {username}</p>
+                  <p className="nav-link">
+                    hello <strong>{username}</strong>
+                  </p>
                 </li>
                 <li className="nav-item">
-                  <p>logout</p>
+                  <p onClick={logout} id="logout" className="nav-link">
+                    logout
+                  </p>
                 </li>
               </span>
             ) : (
