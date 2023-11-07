@@ -1,6 +1,7 @@
 package com.shahaf.lettucecook.controller.recipe;
 
 import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.service.recipe.RecipeService;
 import jakarta.validation.Valid;
@@ -24,12 +25,12 @@ public class RecipesController {
     private Mapper mapper;
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<Recipe>> getAllRecipes() {
+    public ResponseEntity<List<RecipeUserDto>> getAllRecipes() {
         return new ResponseEntity<>(recipeService.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/get/{recipeId}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long recipeId) {
+    public ResponseEntity<RecipeUserDto> getRecipeById(@PathVariable Long recipeId) {
         return new ResponseEntity<>(recipeService.getRecipeById(recipeId), HttpStatus.OK);
     }
 

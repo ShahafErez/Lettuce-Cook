@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import Error from "../components/Error";
 import Loading from "../components/Loading";
 import Diets from "../components/recipe/Diets";
+import Favorite from "../components/recipe/Favorite";
 import Ingredients from "../components/recipe/Ingredients";
 import Instructions from "../components/recipe/Instructions";
 import useFetch from "../hooks/useFetch";
@@ -29,7 +30,8 @@ export default function Recipe() {
     pictureUrl,
     ingredients,
     instructions,
-  } = data;
+  } = data.recipe;
+  let isFavoriteByUser = data.isFavoriteByUser;
 
   return (
     <div className="container" id="recipe-page">
@@ -40,6 +42,8 @@ export default function Recipe() {
         </div>
         <div className="col-8" style={{ textAlign: "left" }}>
           <h1>{name}</h1>
+          <Favorite isFavorite={isFavoriteByUser} recipeId={recipeId} />
+
           <p style={{ width: "90%" }}>{summary}</p>
 
           {/* numeric information */}
@@ -62,7 +66,7 @@ export default function Recipe() {
             </div>
           </div>
 
-          <Diets recipe={data} symbolSize="45px" />
+          <Diets recipe={data.recipe} symbolSize="45px" />
         </div>
       </div>
 
