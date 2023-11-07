@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Login from "./components/users/Login";
 import Register from "./components/users/Register";
 import About from "./pages/About";
+import Favorites from "./pages/Favorites";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Recipe from "./pages/Recipe";
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/about" element={<About />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/recipe/:id" element={<Recipe />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

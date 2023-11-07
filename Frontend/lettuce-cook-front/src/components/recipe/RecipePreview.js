@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Diets from "../recipe/Diets";
 
 export default function RecipePreview(props) {
-  const recipe = props.recipeInfo.recipe;
-  const isFavoriteByUser = props.recipeInfo.isFavoriteByUser;
+  const recipe = props.recipe;
+  const isFavoriteByUser = props.isFavoriteByUser;
 
   const navigate = useNavigate();
 
