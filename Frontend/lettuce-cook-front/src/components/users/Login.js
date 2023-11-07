@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { login } from "../../services/authService";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,43 +15,13 @@ export default function Login() {
     status: "",
   });
 
-  async function loginRequest(loginBody) {
-    let isLoggedInSuccessfully = false;
-    let response = null;
-
-    await fetch(`${global.dataUrl}/auth/authenticate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginBody),
-      withCredentials: true,
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          isLoggedInSuccessfully = true;
-          return res.json();
-        }
-        return res.text();
-      })
-      .then((json) => {
-        response = json;
-      })
-      .catch((e) => {
-        console.error("An error occurred during post request: ", e);
-      });
-    return { isLoggedInSuccessfully: isLoggedInSuccessfully, response };
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
 
-    let loginBody = {
-      email: email,
-      password: password.password,
-    };
-
-    const { isLoggedInSuccessfully, response } = await loginRequest(loginBody);
+    const { isLoggedInSuccessfully, response } = await login(
+      email,
+      password.password
+    );
 
     if (isLoggedInSuccessfully) {
       navigate("/");
