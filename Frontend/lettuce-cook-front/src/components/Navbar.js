@@ -1,6 +1,8 @@
 import React from "react";
 
 export default function Navbar() {
+  const username = localStorage.getItem("username");
+
   return (
     <nav id="navbar" className="navbar navbar-expand-lg bg-secondary">
       <div className="container">
@@ -20,18 +22,29 @@ export default function Navbar() {
               </a>
             </li>
 
-            <span className="navbar-users">
-              <li className="nav-item">
-                <a className="nav-link" href="/login">
-                  Login
-                </a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/register">
-                  Register
-                </a>
-              </li>
-            </span>
+            {username ? (
+              <span className="navbar-users">
+                <li className="nav-item">
+                  <p>hello {username}</p>
+                </li>
+                <li className="nav-item">
+                  <p>logout</p>
+                </li>
+              </span>
+            ) : (
+              <span className="navbar-users">
+                <li className="nav-item">
+                  <a className="nav-link" href="/login">
+                    Login
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a className="nav-link" href="/register">
+                    Register
+                  </a>
+                </li>
+              </span>
+            )}
           </ul>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { register } from "../../services/authService";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -68,33 +69,6 @@ export default function Register() {
     }
   }
 
-  async function registerRequest(registerBody) {
-    let isRegisteredSuccessfully = false;
-    let response = null;
-
-    await fetch(`${global.dataUrl}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(registerBody),
-      withCredentials: true,
-    })
-      .then((res) => {
-        if (res.status === 201) {
-          isRegisteredSuccessfully = true;
-        }
-        return res.json();
-      })
-      .then((json) => {
-        response = json;
-      })
-      .catch((e) => {
-        console.error("An error occurred during post request: ", e);
-      });
-    return { isRegisteredSuccessfully, response };
-  }
-
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -104,10 +78,7 @@ export default function Register() {
       password: password.password,
     };
 
-    const { isRegisteredSuccessfully, response } = await registerRequest(
-      registerBody
-    );
-
+    const { isRegisteredSuccessfully, response } = await register(registerBody);
     if (isRegisteredSuccessfully) {
       navigate("/");
     } else {
