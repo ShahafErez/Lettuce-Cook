@@ -8,7 +8,6 @@ export const login = async (email, password) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email: email, password: password }),
-    // withCredentials: true,
   })
     .then((res) => {
       if (res.status === 200) {
@@ -28,6 +27,7 @@ export const login = async (email, password) => {
     const { token, username } = response;
     localStorage.setItem("token", token);
     localStorage.setItem("username", username);
+    window.dispatchEvent(new Event("storage"));
   }
 
   return { isLoggedInSuccessfully: isLoggedInSuccessfully, response };
@@ -62,6 +62,7 @@ export const register = async (body) => {
     const { token, username } = response;
     localStorage.setItem("token", token);
     localStorage.setItem("username", username);
+    window.dispatchEvent(new Event("storage"));
   }
 
   return { isRegisteredSuccessfully, response };
@@ -70,4 +71,5 @@ export const register = async (body) => {
 export const logout = async () => {
   localStorage.removeItem("token");
   localStorage.removeItem("username");
+  window.dispatchEvent(new Event("storage"));
 };

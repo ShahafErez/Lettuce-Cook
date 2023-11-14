@@ -1,8 +1,9 @@
 import React from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { logout } from "../services/authService";
 
 export default function Navbar() {
-  const username = localStorage.getItem("username");
+  const username = useLocalStorage("username");
 
   return (
     <nav id="navbar" className="navbar navbar-expand-lg bg-secondary">

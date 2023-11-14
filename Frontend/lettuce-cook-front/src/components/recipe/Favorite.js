@@ -9,10 +9,10 @@ export default function Favorite(props) {
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(props.isFavorite);
   let recipeId = props.recipeId;
+  let userLoggedIn = props.userLoggedIn;
 
   async function handleClick() {
-    // checking if a user is logged in
-    if (!localStorage.getItem("username")) {
+    if (!userLoggedIn) {
       navigate("/login");
     }
 
@@ -29,7 +29,7 @@ export default function Favorite(props) {
 
   return (
     <div className="favorite" onClick={handleClick}>
-      {isFavorite ? (
+      {userLoggedIn && isFavorite ? (
         <i className="bi bi-suit-heart-fill"></i>
       ) : (
         <i className="bi bi-suit-heart"></i>

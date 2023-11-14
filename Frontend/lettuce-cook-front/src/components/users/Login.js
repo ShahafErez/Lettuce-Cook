@@ -24,7 +24,8 @@ export default function Login() {
     );
 
     if (isLoggedInSuccessfully) {
-      navigate("/");
+      // navigate to previous page
+      navigate(-1);
     } else {
       setResponseMessage({
         message: response,
