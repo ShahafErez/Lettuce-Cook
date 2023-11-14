@@ -7,12 +7,14 @@ import Favorite from "../components/recipe/Favorite";
 import Ingredients from "../components/recipe/Ingredients";
 import Instructions from "../components/recipe/Instructions";
 import useFetch from "../hooks/useFetch";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export default function Recipe() {
   const recipeId = useParams().id;
   const { isLoading, isError, data } = useFetch(
     `${global.dataUrl}/recipes/get/${recipeId}`
   );
+  const userLoggedIn = useLocalStorage("username") != null;
 
   if (isLoading) {
     return <Loading />;
@@ -31,7 +33,7 @@ export default function Recipe() {
     ingredients,
     instructions,
   } = data.recipe;
-  let isFavoriteByUser = data.isFavoriteByUser;
+  let isFavoriteByUser = userLoggedIn && data.isFavoriteByUser;
 
   return (
     <div className="container" id="recipe-page">
@@ -42,7 +44,11 @@ export default function Recipe() {
         </div>
         <div className="col-8" style={{ textAlign: "left" }}>
           <h1>{name}</h1>
-          <Favorite isFavorite={isFavoriteByUser} recipeId={recipeId} />
+          <Favorite
+            isFavorite={isFavoriteByUser}
+            userLoggedIn={userLoggedIn}
+            recipeId={recipeId}
+          />
 
           <p style={{ width: "90%" }}>{summary}</p>
 

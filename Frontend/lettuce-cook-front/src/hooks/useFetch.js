@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
+import { useLocalStorage } from "./useLocalStorage";
 
 export default function useFetch(url) {
   const [data, setData] = useState();
+  const token = useLocalStorage("token");
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -9,11 +11,8 @@ export default function useFetch(url) {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
 
-    if (localStorage.getItem("token")) {
-      headers.append(
-        "Authorization",
-        `Bearer ${localStorage.getItem("token")}`
-      );
+    if (token) {
+      headers.append("Authorization", `Bearer ${token}`);
     }
 
     fetch(url, {
@@ -37,7 +36,7 @@ export default function useFetch(url) {
         setIsError(true);
         console.error("An error occurred during get request: ", e);
       });
-  }, [url]);
+  }, [url, token]);
 
   useEffect(() => {
     getRequest();
