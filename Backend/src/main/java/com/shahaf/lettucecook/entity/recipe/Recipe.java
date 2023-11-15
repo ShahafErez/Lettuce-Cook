@@ -22,6 +22,8 @@ public class Recipe {
     private Boolean dairyFree;
     private Integer makingTime;
     private Integer servings;
+    @ElementCollection(targetClass = Category.class)
+    @Enumerated(EnumType.STRING)
     private List<Category> categories;
     private String pictureUrl;
     private byte[] pictureData;

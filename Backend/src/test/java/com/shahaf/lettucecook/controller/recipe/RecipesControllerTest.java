@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shahaf.lettucecook.dto.recipe.IngredientDto;
 import com.shahaf.lettucecook.dto.recipe.InstructionDto;
 import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
+import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Ingredient;
 import com.shahaf.lettucecook.entity.recipe.Instruction;
@@ -35,7 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -92,12 +93,14 @@ class RecipesControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        List<Recipe> recipesListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
+        List<RecipeUserDto> recipesListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
-        assertEquals(1, recipesListResponse.get(0).getId());
-        assertEquals("recipe 1", recipesListResponse.get(0).getName());
-        assertEquals(2, recipesListResponse.get(1).getId());
-        assertEquals("recipe 2", recipesListResponse.get(1).getName());
+        Recipe responseRecipe1 = recipesListResponse.get(0).getRecipe();
+        Recipe responseRecipe2 = recipesListResponse.get(1).getRecipe();
+        assertEquals(1, responseRecipe1.getId());
+        assertEquals("recipe 1", responseRecipe1.getName());
+        assertEquals(2, responseRecipe2.getId());
+        assertEquals("recipe 2", responseRecipe2.getName());
 
         verify(recipesRepository, times(1)).findAll();
     }
@@ -118,12 +121,14 @@ class RecipesControllerTest {
                 .andReturn();
 
         String content = result.getResponse().getContentAsString();
-        Recipe recipe = new ObjectMapper().readValue(content, new TypeReference<>() {
+        RecipeUserDto RecipeUserDto = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
+        Recipe recipe = RecipeUserDto.getRecipe();
         assertEquals(1, recipe.getId());
         assertEquals("recipe", recipe.getName());
         assertEquals("ingredient", recipe.getIngredients().get(0).getName());
         assertEquals(1, recipe.getInstructions().size());
+        assertFalse(RecipeUserDto.getIsFavoriteByUser());
 
         verify(recipesRepository, times(1)).findById(1L);
     }
