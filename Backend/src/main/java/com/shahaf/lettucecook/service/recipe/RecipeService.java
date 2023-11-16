@@ -5,7 +5,9 @@ import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.enums.recipe.Category;
+import com.shahaf.lettucecook.mapper.RecipeElasticMapper;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
+import com.shahaf.lettucecook.reposetory.elasticsearch.RecipeElasticRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import com.shahaf.lettucecook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class RecipeService {
     @Autowired
     private RecipesRepository recipesRepository;
     @Autowired
+    private RecipeElasticRepository recipeElasticRepository;
+    @Autowired
     private RecipeGlobalService recipeGlobalService;
     @Autowired
     private FavoriteRecipeService favoriteRecipeService;
@@ -32,6 +36,8 @@ public class RecipeService {
     private UserService userService;
     @Autowired
     private RecipeMapper recipeMapper;
+    @Autowired
+    private RecipeElasticMapper recipeElasticMapper;
 
     public List<RecipeUserDto> getRecipes(Integer numOfRecipes, Category category, Boolean random) {
         User user = userService.getUserFromToken();
@@ -123,7 +129,10 @@ public class RecipeService {
 
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
         Recipe recipeCreation = recipeMapper.recipeDtoToRecipe(recipeCreationDto);
-        return recipesRepository.save(recipeCreation);
+        Recipe createdRecipe = recipesRepository.save(recipeCreation);
+        recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(createdRecipe));
+
+        return createdRecipe;
     }
 
     public void deleteRecipe(Long recipeId) {

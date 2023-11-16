@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
+
 @RestController
-@RequestMapping(path = "api/v1/favorite")
+@RequestMapping(path = PATH_PREFIX + "/favorite")
 public class FavoriteRecipeController {
 
     @Autowired

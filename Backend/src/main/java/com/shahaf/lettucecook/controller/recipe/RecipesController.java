@@ -4,7 +4,6 @@ import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
 import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.enums.recipe.Category;
-import com.shahaf.lettucecook.exceptions.BadRequestException;
 import com.shahaf.lettucecook.service.recipe.RecipeService;
 import jakarta.validation.Valid;
 import org.apache.catalina.mapper.Mapper;
@@ -16,9 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(maxAge = 3600)
+import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
+import static utils.EnumConverter.stringToEnum;
+
 @RestController
-@RequestMapping(path = "api/v1/recipes")
+@RequestMapping(path = PATH_PREFIX + "/recipes")
 public class RecipesController {
 
     @Autowired
@@ -31,20 +32,9 @@ public class RecipesController {
             @RequestParam(required = false) Integer numOfRecipes,
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "false", required = false) Boolean random) {
-        return new ResponseEntity<>(recipeService.getRecipes(numOfRecipes, stringToCategory(category), random), HttpStatus.OK);
+        return new ResponseEntity<>(recipeService.getRecipes(numOfRecipes, stringToEnum(category, Category.class), random), HttpStatus.OK);
     }
 
-    private Category stringToCategory(String category) {
-        Category categoryEnum = null;
-        if (category != null) {
-            try {
-                categoryEnum = Category.valueOf(category.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new BadRequestException("Category given does not match the existing categories");
-            }
-        }
-        return categoryEnum;
-    }
 
     @GetMapping("/get/{recipeId}")
     public ResponseEntity<RecipeUserDto> getRecipeById(@PathVariable Long recipeId) {
@@ -76,5 +66,4 @@ public class RecipesController {
         recipeService.deleteAllRecipes();
         return new ResponseEntity<>("Deleted all recipes.", HttpStatus.OK);
     }
-
 }
