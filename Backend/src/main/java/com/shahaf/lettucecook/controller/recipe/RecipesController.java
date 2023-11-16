@@ -3,6 +3,8 @@ package com.shahaf.lettucecook.controller.recipe;
 import com.shahaf.lettucecook.dto.recipe.RecipeCreationDto;
 import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
+import com.shahaf.lettucecook.enums.recipe.Category;
+import com.shahaf.lettucecook.exceptions.BadRequestException;
 import com.shahaf.lettucecook.service.recipe.RecipeService;
 import jakarta.validation.Valid;
 import org.apache.catalina.mapper.Mapper;
@@ -24,9 +26,24 @@ public class RecipesController {
 
     private Mapper mapper;
 
-    @GetMapping("/get-all")
-    public ResponseEntity<List<RecipeUserDto>> getAllRecipes() {
-        return new ResponseEntity<>(recipeService.getAll(), HttpStatus.OK);
+    @GetMapping("/get-recipes")
+    public ResponseEntity<List<RecipeUserDto>> getRecipes(
+            @RequestParam(required = false) Integer numOfRecipes,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "false", required = false) Boolean random) {
+        return new ResponseEntity<>(recipeService.getRecipes(numOfRecipes, stringToCategory(category), random), HttpStatus.OK);
+    }
+
+    private Category stringToCategory(String category) {
+        Category categoryEnum = null;
+        if (category != null) {
+            try {
+                categoryEnum = Category.valueOf(category.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Category given does not match the existing categories");
+            }
+        }
+        return categoryEnum;
     }
 
     @GetMapping("/get/{recipeId}")
@@ -38,6 +55,14 @@ public class RecipesController {
     public ResponseEntity<String> addRecipe(@Valid @RequestBody RecipeCreationDto recipeCreationDto) throws IOException {
         Recipe newSavedRecipe = recipeService.addRecipe(recipeCreationDto);
         return new ResponseEntity<>("Recipe added successfully. New recipe id: " + newSavedRecipe.getId(), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/add-many")
+    public ResponseEntity<String> addRecipe(@Valid @RequestBody List<RecipeCreationDto> recipeCreationDtoList) throws IOException {
+        for (RecipeCreationDto recipeCreationDto : recipeCreationDtoList) {
+            recipeService.addRecipe(recipeCreationDto);
+        }
+        return new ResponseEntity<>("Recipes added successfully", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{recipeId}")

@@ -33,8 +33,9 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterDto registerDto) {
         usernameOrEmailExistsValidations(registerDto.getUsername(), registerDto.getEmail());
+        String username = registerDto.getUsername();
         var user = User.builder()
-                .username(registerDto.getUsername())
+                .username(username)
                 .email(registerDto.getEmail())
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .role(Role.USER)
@@ -43,6 +44,7 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .username(username)
                 .build();
     }
 

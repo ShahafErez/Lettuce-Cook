@@ -51,6 +51,10 @@
   text-align: left;
 }
 
+.recipes-list {
+  margin-bottom: 15px;
+}
+
 /* Diets */
 .diet img {
   margin: 5px;
