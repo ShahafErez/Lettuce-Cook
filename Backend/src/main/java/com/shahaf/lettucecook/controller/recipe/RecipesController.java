@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(maxAge = 3600)
+import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
+
 @RestController
-@RequestMapping(path = "api/v1/recipes")
+@RequestMapping(path = PATH_PREFIX + "/recipes")
 public class RecipesController {
 
     @Autowired
