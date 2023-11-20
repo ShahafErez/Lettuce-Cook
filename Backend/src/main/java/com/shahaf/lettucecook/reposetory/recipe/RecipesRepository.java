@@ -13,6 +13,11 @@ import java.util.Optional;
 @Repository
 public interface RecipesRepository extends JpaRepository<Recipe, Long> {
 
+    List<Recipe> findRecipesByOrderByIdDesc();
+
+    List<Recipe> findNRecipesByOrderByIdDesc(Pageable pageable);
+
+
     @Query("SELECT r FROM Recipe r WHERE ?1 MEMBER OF r.categories")
     Optional<List<Recipe>> getRecipesByCategory(Category category);
 
