@@ -16,7 +16,7 @@ export default function RecipesPage() {
       {category === "all" ? (
         <RecipesList random="false" />
       ) : (
-        <RecipesList category={category} random="true" />
+        <RecipesList category={category} random="false" />
       )}
     </React.Fragment>
   );
