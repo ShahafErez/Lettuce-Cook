@@ -8,7 +8,7 @@ public final class EnumConverter {
     }
     public static <T extends Enum<T>> T stringToEnum(String value, Class<T> enumType) {
         T enumValue = null;
-        if (value != null) {
+        if (value != null && !value.isEmpty()) {
             try {
                 enumValue = Enum.valueOf(enumType, value.toUpperCase());
             } catch (IllegalArgumentException e) {

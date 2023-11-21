@@ -42,77 +42,72 @@ public class RecipeService {
     public List<RecipeUserDto> getRecipes(Integer numOfRecipes, Category category, Boolean random) {
         User user = userService.getUserFromToken();
 
-        if (numOfRecipes != null && category != null) {
-            return getNumberOfRecipesByCategory(user, numOfRecipes, category, random);
-        }
-
-        if (numOfRecipes != null) {
-            return getNumberOfRecipes(user, numOfRecipes, random);
-        }
-
         if (category != null) {
-            return getAllRecipesByCategory(user, category, random);
+            return getRecipesByCategory(category, numOfRecipes, random, user);
         }
-        return getAllRecipes(user, random);
+
+        return getRecipes(numOfRecipes, random, user);
+
     }
 
-
-    private List<RecipeUserDto> getAllRecipes(User user, Boolean random) {
-        List<RecipeUserDto> allRecipes = recipesRepository.findAll().stream()
-                .map(recipe -> mapRecipeToRecipeUserDto(recipe, user))
-                .collect(Collectors.toList());
-
+    private List<RecipeUserDto> getRecipes(Integer numOfRecipes, Boolean random, User user) {
+        List<RecipeUserDto> recipes;
+        // if recipes should be randomize-getting all recipes, and then shuffling
         if (Boolean.TRUE.equals(random)) {
-            Collections.shuffle(allRecipes);
+            recipes = getAllRecipes(user);
+            Collections.shuffle(recipes);
+            if (numOfRecipes != null) {
+                recipes = recipes.subList(0, numOfRecipes);
+            }
+        } else {
+            if (numOfRecipes != null) {
+                recipes = getNumberOfRecipes(numOfRecipes, user);
+            } else {
+                recipes = getAllRecipes(user);
+            }
         }
-        return allRecipes;
+        return recipes;
     }
 
-    private List<RecipeUserDto> getAllRecipesByCategory(User user, Category category, Boolean random) {
+    private List<RecipeUserDto> getRecipesByCategory(Category category, Integer numOfRecipes, Boolean random, User user) {
+        List<RecipeUserDto> recipesByCategory;
+        // if recipes should be randomize-getting all recipes by category, and then shuffling
+        if (Boolean.TRUE.equals(random)) {
+            recipesByCategory = getAllRecipesByCategory(user, category);
+            Collections.shuffle(recipesByCategory);
+            if (numOfRecipes != null) {
+                recipesByCategory = recipesByCategory.subList(0, numOfRecipes);
+            }
+        } else {
+            if (numOfRecipes != null) {
+                recipesByCategory = getNumberOfRecipesByCategory(category, numOfRecipes, user);
+            } else {
+                recipesByCategory = getAllRecipesByCategory(user, category);
+            }
+        }
+        return recipesByCategory;
+    }
+
+    private List<RecipeUserDto> getAllRecipes(User user) {
+        return recipesRepository.findRecipesByOrderByIdDesc().stream().map(recipe -> mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList());
+
+    }
+
+    private List<RecipeUserDto> getAllRecipesByCategory(User user, Category category) {
         Optional<List<Recipe>> queryResult = recipesRepository.getRecipesByCategory(category);
-        if (!queryResult.isPresent()) {
-            return Collections.emptyList();
-        }
-        List<RecipeUserDto> allRecipesByCategory = queryResult.get().stream()
-                .map(recipe -> mapRecipeToRecipeUserDto(recipe, user))
-                .collect(Collectors.toList());
-
-        if (Boolean.TRUE.equals(random)) {
-            Collections.shuffle(allRecipesByCategory);
-        }
-        return allRecipesByCategory;
-
+        return queryResult.map(recipes -> recipes.stream().map(recipe -> mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList())).orElse(Collections.emptyList());
     }
 
-    private List<RecipeUserDto> getNumberOfRecipes(User user, Integer numOfRecipes, Boolean random) {
+    private List<RecipeUserDto> getNumberOfRecipes(Integer numOfRecipes, User user) {
         Pageable pageable = PageRequest.of(0, numOfRecipes);
-        Page<Recipe> queryResult = recipesRepository.findAll(pageable);
-
-        List<RecipeUserDto> numberOfRecipes = queryResult.stream()
-                .map(recipe -> mapRecipeToRecipeUserDto(recipe, user))
-                .collect(Collectors.toList());
-
-        if (Boolean.TRUE.equals(random)) {
-            Collections.shuffle(numberOfRecipes);
-        }
-        return numberOfRecipes;
+        List<Recipe> queryResult = recipesRepository.findNRecipesByOrderByIdDesc(pageable);
+        return queryResult.stream().map(recipe -> mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList());
     }
 
-    private List<RecipeUserDto> getNumberOfRecipesByCategory(User user, Integer numOfRecipes, Category category, Boolean random) {
+    private List<RecipeUserDto> getNumberOfRecipesByCategory(Category category, Integer numOfRecipes, User user) {
         Pageable pageable = PageRequest.of(0, numOfRecipes);
         Optional<List<Recipe>> queryResult = recipesRepository.getNRecipesByCategory(category, pageable);
-
-        if (!queryResult.isPresent()) {
-            return Collections.emptyList();
-        }
-        List<RecipeUserDto> numberOfRecipesByCategory = queryResult.get().stream()
-                .map(recipe -> mapRecipeToRecipeUserDto(recipe, user))
-                .collect(Collectors.toList());
-
-        if (Boolean.TRUE.equals(random)) {
-            Collections.shuffle(numberOfRecipesByCategory);
-        }
-        return numberOfRecipesByCategory;
+        return queryResult.map(recipes -> recipes.stream().map(recipe -> mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList())).orElse(Collections.emptyList());
     }
 
     private RecipeUserDto mapRecipeToRecipeUserDto(Recipe recipe, User user) {

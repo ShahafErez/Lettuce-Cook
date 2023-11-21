@@ -1,14 +1,17 @@
 import React from "react";
-import useFetch from "../../../hooks/useFetch";
-import Error from "../../Error";
-import Loading from "../../Loading";
-import RecipePreview from "../RecipePreview";
+import useFetch from "../../hooks/useFetch";
+import Error from "../Error";
+import Loading from "../Loading";
+import RecipePreview from "../recipe/RecipePreview";
 
-export default function RecipesByCategory(props) {
-  let category = props.category;
-  const { isLoading, isError, data } = useFetch(
-    `${global.dataUrl}/recipes/get-recipes?category=${category}&numOfRecipes=4&random=true`
-  );
+export default function RecipesList(props) {
+  let category = props.category || "";
+  let numOfRecipes = global.recipesNumberHomePage;
+  let random = props.random;
+
+  let url = `${global.dataUrl}/recipes/get-recipes?numOfRecipes=${numOfRecipes}&category=${category}&random=${random}`;
+
+  const { isLoading, isError, data } = useFetch(url);
   if (isLoading) {
     return <Loading />;
   }
@@ -16,10 +19,9 @@ export default function RecipesByCategory(props) {
   return (
     <div className="recipes-list">
       {isError ? (
-        <Error message={"for all recipes"} style={{ textAlign: "center" }} />
+        <Error style={{ textAlign: "center" }} />
       ) : (
         <React.Fragment>
-          <h2 className="recipes-group-title">{category}</h2>
           <div className="row row-cols-1 row-cols-md-4 g-4">
             {data.map((recipeInfo) => (
               <div className="col" key={recipeInfo.recipe.id}>
