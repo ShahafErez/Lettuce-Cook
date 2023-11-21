@@ -4,6 +4,7 @@ import { logout } from "../services/authService";
 
 export default function Navbar() {
   const username = useLocalStorage("username");
+  let categoriesList = ["dinner", "lunch", "salad", "snack", "dessert"];
 
   return (
     <nav id="navbar" className="navbar navbar-expand-lg bg-secondary">
@@ -30,6 +31,31 @@ export default function Navbar() {
                 </a>
               </li>
             )}
+
+            <li className="nav-item dropdown">
+              <div
+                className="nav-link dropdown-toggle"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Recipes
+              </div>
+              <ul className="dropdown-menu">
+                <li className="dropdown-item">
+                  <a className="nav-link" href="/recipes/all">
+                    All Recipes
+                  </a>
+                </li>
+                {categoriesList.map((category, index) => (
+                  <li key={index} className="dropdown-item">
+                    <a className="nav-link" href={`/recipes/${category}`}>
+                      {category}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
 
             {username ? (
               <span className="navbar-users">

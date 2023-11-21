@@ -15,7 +15,7 @@
   margin: 0px;
 }
 
-.navbar li {
+.navbar .nav-item {
   margin-left: 10px;
 }
 
@@ -77,6 +77,12 @@
 
 .recipes-list-category .dropdown .dropdown-item:hover {
   cursor: pointer;
+}
+
+.recipes-list-category .nav-link {
+  font-size: 16px;
+  align-self: center;
+  margin-left: 10px;
 }
 
 /* Diets */

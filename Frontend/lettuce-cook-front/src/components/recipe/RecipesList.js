@@ -6,10 +6,15 @@ import RecipePreview from "../recipe/RecipePreview";
 
 export default function RecipesList(props) {
   let category = props.category || "";
-  let numOfRecipes = global.recipesNumberHomePage;
+  let numOfRecipes = props.numOfRecipes;
   let random = props.random;
 
-  let url = `${global.dataUrl}/recipes/get-recipes?numOfRecipes=${numOfRecipes}&category=${category}&random=${random}`;
+  let url;
+  if (numOfRecipes === undefined) {
+    url = `${global.dataUrl}/recipes/get-recipes?category=${category}&random=${random}`;
+  } else {
+    url = `${global.dataUrl}/recipes/get-recipes?numOfRecipes=${numOfRecipes}&category=${category}&random=${random}`;
+  }
 
   const { isLoading, isError, data } = useFetch(url);
   if (isLoading) {

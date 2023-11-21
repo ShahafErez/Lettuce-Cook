@@ -8,6 +8,7 @@ import Favorites from "./pages/Favorites";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Recipe from "./pages/Recipe";
+import RecipesPage from "./pages/RecipesPage";
 import Search from "./pages/Search";
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/recipe/:id" element={<Recipe />} />
+          <Route path="/recipes/:category" element={<RecipesPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
