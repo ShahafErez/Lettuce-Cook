@@ -52,7 +52,27 @@
 }
 
 .recipes-list {
-  margin-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.recipes-list-category {
+  display: flex;
+}
+
+.recipes-list-category .dropdown {
+  margin-left: 10px;
+  font-size: 16px;
+  align-self: center;
+}
+
+.recipes-list-category .dropdown button {
+  background: none;
+  border: 0px;
+  padding: 0px;
+}
+
+.recipes-list-category .dropdown .dropdown-item:hover {
+  cursor: pointer;
 }
 
 /* Diets */
