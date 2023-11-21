@@ -219,3 +219,9 @@
   margin-top: 10px;
   position: absolute;
 }
+
+/* Search */
+#search-page #search-bar {
+  width: 50%;
+  margin: auto;
+}

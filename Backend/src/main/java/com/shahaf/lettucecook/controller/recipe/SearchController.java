@@ -1,7 +1,9 @@
 package com.shahaf.lettucecook.controller.recipe;
 
+import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.recipe.RecipeElastic;
 import com.shahaf.lettucecook.reposetory.elasticsearch.RecipeElasticRepository;
+import com.shahaf.lettucecook.service.recipe.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +17,18 @@ import java.util.List;
 import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
 
 @RestController
-@RequestMapping(path = PATH_PREFIX + "/elastic")
-public class ElasticSearchController {
+@RequestMapping(path = PATH_PREFIX + "/search")
+public class SearchController {
 
     @Autowired
+    RecipeService recipeService;
+    @Autowired
     RecipeElasticRepository recipeElasticRepository;
+
+    @GetMapping("/")
+    public List<RecipeUserDto> getRecipes() {
+        return recipeService.getRecipes(null, null, false);
+    }
 
     @GetMapping("/get-all")
     public ResponseEntity<List<RecipeElastic>> getAllRecipes() {

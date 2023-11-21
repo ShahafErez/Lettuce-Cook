@@ -38,7 +38,7 @@ export default function Home() {
           </ul>
         </div>
         <a className="nav-link" href={`/recipes/${category}`}>
-          All {category} recipes...
+          All {category.toLowerCase()} recipes...
         </a>
       </div>
 
