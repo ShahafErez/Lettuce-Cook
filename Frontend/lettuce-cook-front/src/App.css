@@ -65,6 +65,10 @@
   align-self: center;
 }
 
+.recipes-list-category .dropdown i {
+  color: #5ca43e;
+}
+
 .recipes-list-category .dropdown button {
   background: none;
   border: 0px;
