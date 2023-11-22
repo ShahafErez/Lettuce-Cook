@@ -1,5 +1,14 @@
 /* Define styles for components */
 
+/* Loading */
+.loading {
+  margin-bottom: 10px;
+}
+
+.loading img {
+  height: 70px;
+}
+
 /* Navbar */
 #navbar {
   padding: 0px;
@@ -224,4 +233,5 @@
 #search-page #search-bar {
   width: 50%;
   margin: auto;
+  margin-bottom: 20px;
 }

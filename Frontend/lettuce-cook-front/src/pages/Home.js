@@ -21,7 +21,7 @@ export default function Home() {
         {/* Select different category */}
         <div className="dropdown">
           <button type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i className="bi bi-arrow-left-right"></i>
+            <i className="bi bi-arrow-left-right" title="change category"></i>
           </button>
           <ul className="dropdown-menu">
             {categoriesList.map((category, index) => (
