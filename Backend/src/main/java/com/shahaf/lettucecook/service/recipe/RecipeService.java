@@ -11,7 +11,6 @@ import com.shahaf.lettucecook.reposetory.elasticsearch.RecipeElasticRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import com.shahaf.lettucecook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class RecipeService {
     @Autowired
     private RecipeElasticRepository recipeElasticRepository;
     @Autowired
-    private RecipeGlobalService recipeGlobalService;
+    private GlobalRecipeService globalRecipeService;
     @Autowired
     private FavoriteRecipeService favoriteRecipeService;
     @Autowired
@@ -56,8 +55,9 @@ public class RecipeService {
         if (Boolean.TRUE.equals(random)) {
             recipes = getAllRecipes(user);
             Collections.shuffle(recipes);
-            if (numOfRecipes != null) {
-                recipes = recipes.subList(0, numOfRecipes);
+            if (numOfRecipes != null && (recipes.size() > numOfRecipes)) {
+                    recipes = recipes.subList(0, numOfRecipes);
+
             }
         } else {
             if (numOfRecipes != null) {
@@ -75,8 +75,9 @@ public class RecipeService {
         if (Boolean.TRUE.equals(random)) {
             recipesByCategory = getAllRecipesByCategory(user, category);
             Collections.shuffle(recipesByCategory);
-            if (numOfRecipes != null) {
-                recipesByCategory = recipesByCategory.subList(0, numOfRecipes);
+            if (numOfRecipes != null && (recipesByCategory.size() > numOfRecipes)) {
+                    recipesByCategory = recipesByCategory.subList(0, numOfRecipes);
+
             }
         } else {
             if (numOfRecipes != null) {
@@ -90,7 +91,6 @@ public class RecipeService {
 
     private List<RecipeUserDto> getAllRecipes(User user) {
         return recipesRepository.findRecipesByOrderByIdDesc().stream().map(recipe -> mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList());
-
     }
 
     private List<RecipeUserDto> getAllRecipesByCategory(User user, Category category) {
@@ -117,7 +117,7 @@ public class RecipeService {
 
     public RecipeUserDto getRecipeById(Long recipeId) {
         User user = userService.getUserFromToken();
-        Recipe recipe = recipeGlobalService.getRecipeById(recipeId);
+        Recipe recipe = globalRecipeService.getRecipeById(recipeId);
         boolean isFavorite = (user != null) && favoriteRecipeService.isFavorite(recipeId, user);
         return new RecipeUserDto(recipe, isFavorite);
     }
@@ -131,15 +131,17 @@ public class RecipeService {
     }
 
     public void deleteRecipe(Long recipeId) {
-        Recipe recipe = recipeGlobalService.getRecipeById(recipeId);
+        Recipe recipe = globalRecipeService.getRecipeById(recipeId);
         if (recipe != null) {
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
+            recipeElasticRepository.deleteById(recipeId.toString());
         }
     }
 
     public void deleteAllRecipes() {
         favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
+        recipeElasticRepository.deleteAll();
     }
 }

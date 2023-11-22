@@ -33,6 +33,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/recipes/get/**").permitAll()
                         .requestMatchers("/api/v1/recipes/get-recipes").permitAll()
+                        .requestMatchers("/api/v1/search/**").permitAll()
+                        .requestMatchers("/api/v1/search**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
