@@ -1,11 +1,16 @@
-export const search = async (searchTerm) => {
-  return fetch(`${global.dataUrl}/search/`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
+export const search = async (searchTerm, category) => {
+  return fetch(
+    `${global.dataUrl}/search?searchTerm=${searchTerm || ""}&category=${
+      category || ""
+    }`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  )
     .then((res) => {
       if (res.status !== 200) {
         return -1;

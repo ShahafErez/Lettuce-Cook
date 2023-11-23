@@ -68,8 +68,4 @@ public class FavoriteRecipeService {
     public void deleteAllFavorites() {
         favoriteRecipeRepository.deleteAll();
     }
-
-    public boolean isFavorite(Long recipeId, User user) {
-        return favoriteRecipeRepository.findByRecipeIdAndUserId(recipeId, user.getId()).isPresent();
-    }
 }

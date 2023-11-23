@@ -3,7 +3,7 @@ import RecipesList from "../components/recipe/RecipesList";
 
 export default function Home() {
   let numOfRecipes = global.recipesNumberHomePage;
-  let categoriesList = ["Dinner", "Lunch", "Salad", "Snack", "Dessert"];
+  let categoriesList = global.categoriesList;
   const [category, setCategory] = useState(categoriesList[0]);
 
   return (

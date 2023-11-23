@@ -22,4 +22,7 @@ public abstract class RecipeElasticMapper {
         ingredientList.forEach(ingredient -> ingredientStrings.add(ingredient.getName()));
         return ingredientStrings;
     }
+
+    @Mapping(target = "ingredients", ignore = true)
+    public abstract Recipe recipeElasticToRecipe(RecipeElastic recipeElastic);
 }

@@ -1,6 +1,6 @@
 package com.shahaf.lettucecook.controller.recipe;
 
-import com.shahaf.lettucecook.entity.recipe.RecipeElastic;
+import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.enums.recipe.Category;
 import com.shahaf.lettucecook.service.recipe.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
+import static utils.EnumConverter.stringToEnum;
 
 @RestController
 @RequestMapping(path = PATH_PREFIX + "/search")
 public class SearchController {
-
     @Autowired
     SearchService searchService;
 
     @GetMapping()
-    public ResponseEntity<List<RecipeElastic>> searchByTerm(
+    public ResponseEntity<List<RecipeUserDto>> searchByTerm(
             @RequestParam(required = false) String searchTerm,
-            @RequestParam(required = false) Category category) {
-        return new ResponseEntity<>(searchService.searchByTerm(searchTerm, category), HttpStatus.OK);
+            @RequestParam(required = false) String category) {
+        return new ResponseEntity<>(searchService.searchByTerm(searchTerm, stringToEnum(category, Category.class)), HttpStatus.OK);
     }
 }
