@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import Error from "../components/Error";
 import Loading from "../components/Loading";
 import Diets from "../components/recipe/Diets";
-import Favorite from "../components/recipe/Favorite";
+import Favorite from "../components/recipe/FavoriteSymbol";
 import Ingredients from "../components/recipe/Ingredients";
 import Instructions from "../components/recipe/Instructions";
 import useFetch from "../hooks/useFetch";

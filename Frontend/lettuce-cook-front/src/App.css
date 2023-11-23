@@ -1,5 +1,14 @@
 /* Define styles for components */
 
+/* Loading */
+.loading {
+  margin-bottom: 10px;
+}
+
+.loading img {
+  height: 70px;
+}
+
 /* Navbar */
 #navbar {
   padding: 0px;
@@ -15,7 +24,7 @@
   margin: 0px;
 }
 
-.navbar li {
+.navbar .nav-item {
   margin-left: 10px;
 }
 
@@ -77,6 +86,12 @@
 
 .recipes-list-category .dropdown .dropdown-item:hover {
   cursor: pointer;
+}
+
+.recipes-list-category .nav-link {
+  font-size: 16px;
+  align-self: center;
+  margin-left: 10px;
 }
 
 /* Diets */
@@ -212,4 +227,11 @@
 .response-message {
   margin-top: 10px;
   position: absolute;
+}
+
+/* Search */
+#search-page #search-bar {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 20px;
 }

@@ -21,7 +21,7 @@ public class FavoriteRecipeService {
     @Autowired
     private FavoriteRecipeRepository favoriteRecipeRepository;
     @Autowired
-    private RecipeGlobalService recipeGlobalService;
+    private GlobalRecipeService globalRecipeService;
     @Autowired
     private UserService userService;
 
@@ -36,7 +36,7 @@ public class FavoriteRecipeService {
 
     public void addFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
         User user = userService.getUserByUsername(favoriteRecipeDto.getUsername());
-        Recipe recipe = recipeGlobalService.getRecipeById(favoriteRecipeDto.getRecipeId());
+        Recipe recipe = globalRecipeService.getRecipeById(favoriteRecipeDto.getRecipeId());
         validateRecipeNotAddedAsFavorite(recipe.getId(), user.getId(), favoriteRecipeDto.getUsername());
         favoriteRecipeRepository.save(createNewFavoriteObject(user, recipe));
     }
@@ -67,9 +67,5 @@ public class FavoriteRecipeService {
 
     public void deleteAllFavorites() {
         favoriteRecipeRepository.deleteAll();
-    }
-
-    public boolean isFavorite(Long recipeId, User user) {
-        return favoriteRecipeRepository.findByRecipeIdAndUserId(recipeId, user.getId()).isPresent();
     }
 }

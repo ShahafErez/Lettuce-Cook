@@ -1,5 +1,14 @@
 import React from "react";
 
 export default function Loading() {
-  return <React.Fragment>Loading..</React.Fragment>;
+  return (
+    <div className="loading">
+      <img
+        src="/images/loading.gif"
+        alt="vegetarian"
+        title="vegetarian"
+        height="100px"
+      />
+    </div>
+  );
 }

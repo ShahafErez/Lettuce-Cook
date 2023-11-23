@@ -3,9 +3,9 @@ import { useLocalStorage } from "./useLocalStorage";
 
 export default function useFetch(url) {
   const [data, setData] = useState();
-  const token = useLocalStorage("token");
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const token = useLocalStorage("token");
 
   const getRequest = useCallback(() => {
     const headers = new Headers();

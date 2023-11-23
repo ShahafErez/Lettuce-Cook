@@ -32,8 +32,8 @@ public class RecipeElastic {
     private Integer makingTime;
     @Field(type = FieldType.Keyword)
     private List<Category> categories;
-    @Field(type = FieldType.Binary)
-    private byte[] pictureData;
     @Field(type = FieldType.Keyword)
     private List<String> ingredients;
+    @Field(type = FieldType.Binary)
+    private byte[] pictureData;
 }
