@@ -5,6 +5,7 @@ import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.entity.recipe.RecipeElastic;
 import com.shahaf.lettucecook.enums.recipe.Category;
+import com.shahaf.lettucecook.exceptions.ErrorOccurredException;
 import com.shahaf.lettucecook.mapper.RecipeElasticMapper;
 import com.shahaf.lettucecook.reposetory.elasticsearch.RecipeElasticRepository;
 import com.shahaf.lettucecook.service.UserService;
@@ -26,10 +27,14 @@ public class ElasticService {
     UserService userService;
 
     public void saveRecipe(Recipe recipe) {
-        recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(recipe));
+        try {
+            recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(recipe));
+        } catch (Exception e) {
+            throw new ErrorOccurredException("Failed to add recipe to Elastic.");
+        }
     }
 
-    public void deleteRecipeById(String id) {
+    public void deleteRecipeById(Long id) {
         recipeElasticRepository.deleteById(id);
     }
 
@@ -41,9 +46,9 @@ public class ElasticService {
         User user = userService.getUserFromToken();
         List<RecipeElastic> queryResult;
 
-        if (searchTerm.isEmpty() && category == null) {
+        if ((searchTerm == null || searchTerm.isEmpty()) && category == null) {
             queryResult = recipeElasticRepository.findAll();
-        } else if (searchTerm.isEmpty()) {
+        } else if (searchTerm == null || searchTerm.isEmpty()) {
             queryResult = recipeElasticRepository.findByCategories(category);
         } else if (category == null) {
             queryResult = recipeElasticRepository.findByNameOrSummaryOrIngredients(searchTerm);

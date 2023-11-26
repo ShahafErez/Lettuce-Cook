@@ -5,6 +5,7 @@ import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.enums.recipe.Category;
+import com.shahaf.lettucecook.exceptions.ErrorOccurredException;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import com.shahaf.lettucecook.service.UserService;
@@ -120,11 +121,34 @@ public class RecipeService {
     }
 
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
+        Long id = null;
+        try {
+            Recipe recipe = saveRecipe(recipeCreationDto);
+            id = recipe.getId();
+            elasticService.saveRecipe(recipe);
+            redisService.saveRecipe(recipe);
+            return recipe;
+        } catch (Exception e) {
+            if (id != null) {
+                handleRollback(id);
+            }
+            throw e;
+        }
+    }
+
+    private Recipe saveRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
         Recipe recipeCreation = recipeMapper.recipeDtoToRecipe(recipeCreationDto);
-        Recipe recipe = recipesRepository.save(recipeCreation);
-        elasticService.saveRecipe(recipe);
-        redisService.saveRecipe(recipe);
-        return recipe;
+        try {
+            return recipesRepository.save(recipeCreation);
+        } catch (Exception e) {
+            throw new ErrorOccurredException("Failed to add recipe to relational database.");
+        }
+    }
+
+    private void handleRollback(Long id) {
+        deleteRecipe(id);
+        elasticService.deleteRecipeById(id);
+        redisService.deleteRecipeById(id);
     }
 
     public void deleteRecipe(Long recipeId) {
@@ -132,7 +156,7 @@ public class RecipeService {
         if (recipe != null) {
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
-            elasticService.deleteRecipeById(recipeId.toString());
+            elasticService.deleteRecipeById(recipeId);
             redisService.deleteRecipeById(recipeId);
         }
     }

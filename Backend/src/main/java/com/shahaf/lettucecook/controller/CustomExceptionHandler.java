@@ -1,9 +1,6 @@
 package com.shahaf.lettucecook.controller;
 
-import com.shahaf.lettucecook.exceptions.AuthenticationException;
-import com.shahaf.lettucecook.exceptions.BadRequestException;
-import com.shahaf.lettucecook.exceptions.ResourceAlreadyExistsException;
-import com.shahaf.lettucecook.exceptions.ResourceNotFound;
+import com.shahaf.lettucecook.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -50,5 +47,11 @@ public class CustomExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleBadRequestException(BadRequestException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = ErrorOccurredException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<Object> handleErrorOccurredException(ErrorOccurredException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
