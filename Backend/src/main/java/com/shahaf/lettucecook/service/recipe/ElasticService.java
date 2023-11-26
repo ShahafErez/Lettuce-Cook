@@ -15,17 +15,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SearchService {
-
+public class ElasticService {
     @Autowired
     RecipeElasticRepository recipeElasticRepository;
     @Autowired
     RecipeElasticMapper recipeElasticMapper;
     @Autowired
-    UserService userService;
-    @Autowired
     GlobalRecipeService globalRecipeService;
+    @Autowired
+    UserService userService;
 
+    public void saveRecipe(Recipe recipe) {
+        recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(recipe));
+    }
+
+    public void deleteRecipeById(String id) {
+        recipeElasticRepository.deleteById(id);
+    }
+
+    public void deleteAllRecipes() {
+        recipeElasticRepository.deleteAll();
+    }
 
     public List<RecipeUserDto> searchByTerm(String searchTerm, Category category) {
         User user = userService.getUserFromToken();
@@ -49,6 +59,4 @@ public class SearchService {
             return globalRecipeService.mapRecipeToRecipeUserDto(recipe, user);
         }).collect(Collectors.toList());
     }
-
-
 }

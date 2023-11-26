@@ -5,9 +5,7 @@ import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.enums.recipe.Category;
-import com.shahaf.lettucecook.mapper.RecipeElasticMapper;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
-import com.shahaf.lettucecook.reposetory.elasticsearch.RecipeElasticRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import com.shahaf.lettucecook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +22,19 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeService {
     @Autowired
-    private RecipesRepository recipesRepository;
+    RecipesRepository recipesRepository;
     @Autowired
-    private RecipeElasticRepository recipeElasticRepository;
+    RecipeMapper recipeMapper;
     @Autowired
-    private GlobalRecipeService globalRecipeService;
+    GlobalRecipeService globalRecipeService;
     @Autowired
-    private FavoriteRecipeService favoriteRecipeService;
+    FavoriteRecipeService favoriteRecipeService;
     @Autowired
-    private UserService userService;
+    UserService userService;
     @Autowired
-    private RecipeMapper recipeMapper;
+    ElasticService elasticService;
     @Autowired
-    private RecipeElasticMapper recipeElasticMapper;
+    RedisService redisService;
 
     public List<RecipeUserDto> getRecipes(Integer numOfRecipes, Category category, Boolean random) {
         User user = userService.getUserFromToken();
@@ -123,10 +121,10 @@ public class RecipeService {
 
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
         Recipe recipeCreation = recipeMapper.recipeDtoToRecipe(recipeCreationDto);
-        Recipe createdRecipe = recipesRepository.save(recipeCreation);
-        recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(createdRecipe));
-
-        return createdRecipe;
+        Recipe recipe = recipesRepository.save(recipeCreation);
+        elasticService.saveRecipe(recipe);
+        redisService.saveRecipe(recipe);
+        return recipe;
     }
 
     public void deleteRecipe(Long recipeId) {
@@ -134,13 +132,15 @@ public class RecipeService {
         if (recipe != null) {
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
-            recipeElasticRepository.deleteById(recipeId.toString());
+            elasticService.deleteRecipeById(recipeId.toString());
+            redisService.deleteRecipeById(recipeId);
         }
     }
 
     public void deleteAllRecipes() {
         favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
-        recipeElasticRepository.deleteAll();
+        elasticService.deleteAllRecipes();
+        redisService.deleteAllRecipes();
     }
 }
