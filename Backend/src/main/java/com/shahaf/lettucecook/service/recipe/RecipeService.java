@@ -34,8 +34,6 @@ public class RecipeService {
     UserService userService;
     @Autowired
     ElasticService elasticService;
-    @Autowired
-    RedisService redisService;
 
     public List<RecipeUserDto> getRecipes(Integer numOfRecipes, Category category, Boolean random) {
         User user = userService.getUserFromToken();
@@ -126,7 +124,6 @@ public class RecipeService {
             Recipe recipe = saveRecipe(recipeCreationDto);
             id = recipe.getId();
             elasticService.saveRecipe(recipe);
-            redisService.saveRecipe(recipe);
             return recipe;
         } catch (Exception e) {
             if (id != null) {
@@ -148,7 +145,6 @@ public class RecipeService {
     private void handleRollback(Long id) {
         deleteRecipe(id);
         elasticService.deleteRecipeById(id);
-        redisService.deleteRecipeById(id);
     }
 
     public void deleteRecipe(Long recipeId) {
@@ -157,7 +153,6 @@ public class RecipeService {
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
             elasticService.deleteRecipeById(recipeId);
-            redisService.deleteRecipeById(recipeId);
         }
     }
 
@@ -165,6 +160,5 @@ public class RecipeService {
         favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
         elasticService.deleteAllRecipes();
-        redisService.deleteAllRecipes();
     }
 }
