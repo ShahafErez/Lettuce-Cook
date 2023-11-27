@@ -15,7 +15,7 @@ import java.util.List;
 @Document(indexName = "recipes")
 public class RecipeElastic {
     @Id
-    private String id;
+    private Long id;
     @Field(type = FieldType.Text)
     private String name;
     @Field(type = FieldType.Text)

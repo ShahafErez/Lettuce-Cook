@@ -5,9 +5,8 @@ import com.shahaf.lettucecook.dto.recipe.RecipeUserDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.enums.recipe.Category;
-import com.shahaf.lettucecook.mapper.RecipeElasticMapper;
+import com.shahaf.lettucecook.exceptions.ErrorOccurredException;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
-import com.shahaf.lettucecook.reposetory.elasticsearch.RecipeElasticRepository;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import com.shahaf.lettucecook.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,19 +23,17 @@ import java.util.stream.Collectors;
 @Service
 public class RecipeService {
     @Autowired
-    private RecipesRepository recipesRepository;
+    RecipesRepository recipesRepository;
     @Autowired
-    private RecipeElasticRepository recipeElasticRepository;
+    RecipeMapper recipeMapper;
     @Autowired
-    private GlobalRecipeService globalRecipeService;
+    GlobalRecipeService globalRecipeService;
     @Autowired
-    private FavoriteRecipeService favoriteRecipeService;
+    FavoriteRecipeService favoriteRecipeService;
     @Autowired
-    private UserService userService;
+    UserService userService;
     @Autowired
-    private RecipeMapper recipeMapper;
-    @Autowired
-    private RecipeElasticMapper recipeElasticMapper;
+    ElasticService elasticService;
 
     public List<RecipeUserDto> getRecipes(Integer numOfRecipes, Category category, Boolean random) {
         User user = userService.getUserFromToken();
@@ -122,11 +119,31 @@ public class RecipeService {
     }
 
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
-        Recipe recipeCreation = recipeMapper.recipeDtoToRecipe(recipeCreationDto);
-        Recipe createdRecipe = recipesRepository.save(recipeCreation);
-        recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(createdRecipe));
+        Long id = null;
+        try {
+            Recipe recipe = saveRecipe(recipeCreationDto);
+            id = recipe.getId();
+            elasticService.saveRecipe(recipe);
+            return recipe;
+        } catch (Exception e) {
+            if (id != null) {
+                handleSaveRecipeRollback(id);
+            }
+            throw e;
+        }
+    }
 
-        return createdRecipe;
+    private Recipe saveRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
+        Recipe recipeCreation = recipeMapper.recipeDtoToRecipe(recipeCreationDto);
+        try {
+            return recipesRepository.save(recipeCreation);
+        } catch (Exception e) {
+            throw new ErrorOccurredException("Failed to add recipe to relational database. Error message:" + e.getMessage());
+        }
+    }
+
+    private void handleSaveRecipeRollback(Long recipeId) {
+        recipesRepository.deleteById(recipeId);
     }
 
     public void deleteRecipe(Long recipeId) {
@@ -134,13 +151,13 @@ public class RecipeService {
         if (recipe != null) {
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
-            recipeElasticRepository.deleteById(recipeId.toString());
+            elasticService.deleteRecipeById(recipeId);
         }
     }
 
     public void deleteAllRecipes() {
         favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
-        recipeElasticRepository.deleteAll();
+        elasticService.deleteAllRecipes();
     }
 }

@@ -6,7 +6,7 @@
 }
 
 .loading img {
-  height: 70px;
+  height: 100px;
 }
 
 /* Navbar */
@@ -135,6 +135,9 @@
   position: absolute;
   bottom: 0px;
   right: 10px;
+}
+.preview-card .favorite i {
+  text-shadow: 0 0 3px #000;
 }
 
 #recipe-page .favorite {

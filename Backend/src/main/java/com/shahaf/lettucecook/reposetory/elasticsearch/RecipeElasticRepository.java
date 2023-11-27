@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 
 import java.util.List;
 
-public interface RecipeElasticRepository extends ElasticsearchRepository<RecipeElastic, String> {
+public interface RecipeElasticRepository extends ElasticsearchRepository<RecipeElastic, Long> {
 
     List<RecipeElastic> findAll();
 
