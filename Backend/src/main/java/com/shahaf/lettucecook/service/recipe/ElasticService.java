@@ -30,7 +30,7 @@ public class ElasticService {
         try {
             recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(recipe));
         } catch (Exception e) {
-            throw new ErrorOccurredException("Failed to add recipe to Elastic.");
+            throw new ErrorOccurredException("Failed to add recipe to Elastic. Error message:" + e.getMessage());
         }
     }
 

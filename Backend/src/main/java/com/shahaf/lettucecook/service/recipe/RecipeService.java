@@ -127,7 +127,7 @@ public class RecipeService {
             return recipe;
         } catch (Exception e) {
             if (id != null) {
-                handleRollback(id);
+                handleSaveRecipeRollback(id);
             }
             throw e;
         }
@@ -138,13 +138,12 @@ public class RecipeService {
         try {
             return recipesRepository.save(recipeCreation);
         } catch (Exception e) {
-            throw new ErrorOccurredException("Failed to add recipe to relational database.");
+            throw new ErrorOccurredException("Failed to add recipe to relational database. Error message:" + e.getMessage());
         }
     }
 
-    private void handleRollback(Long id) {
-        deleteRecipe(id);
-        elasticService.deleteRecipeById(id);
+    private void handleSaveRecipeRollback(Long recipeId) {
+        recipesRepository.deleteById(recipeId);
     }
 
     public void deleteRecipe(Long recipeId) {
