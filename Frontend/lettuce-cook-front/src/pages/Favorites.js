@@ -3,12 +3,10 @@ import Error from "../components/Error";
 import Loading from "../components/Loading";
 import RecipePreview from "../components/recipe/RecipePreview";
 import useFetch from "../hooks/useFetch";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export default function Favorites() {
-  let username = useLocalStorage("username");
   const { isLoading, isError, data } = useFetch(
-    `${global.dataUrl}/favorite/get/${username}`
+    `${global.dataUrl}/favorite/get`
   );
 
   if (isLoading) {
