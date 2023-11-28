@@ -9,6 +9,8 @@ import com.shahaf.lettucecook.exceptions.ErrorOccurredException;
 import com.shahaf.lettucecook.mapper.RecipeMapper;
 import com.shahaf.lettucecook.reposetory.recipe.RecipesRepository;
 import com.shahaf.lettucecook.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,18 +36,20 @@ public class RecipeService {
     UserService userService;
     @Autowired
     ElasticService elasticService;
+    private static final Logger logger = LoggerFactory.getLogger(RecipeService.class);
 
     public List<RecipeUserDto> getRecipes(Integer numOfRecipes, Category category, Boolean random) {
         User user = userService.getUserFromToken();
-
+        logger.info("Fetching recipes. Number of recipes: {}, category: {}, is randomize: {}", numOfRecipes, category, random);
         if (category != null) {
-            return getRecipesByCategory(category, numOfRecipes, random, user);
+            return getRecipesByCategory(numOfRecipes, category, random, user);
         }
         return getRecipes(numOfRecipes, random, user);
     }
 
     private List<RecipeUserDto> getRecipes(Integer numOfRecipes, Boolean random, User user) {
         List<Recipe> recipes;
+
         // if recipes should be randomize-getting all recipes, and then shuffling
         if (Boolean.TRUE.equals(random)) {
             recipes = getAllRecipes();
@@ -60,14 +64,16 @@ public class RecipeService {
                 recipes = getAllRecipes();
             }
         }
+
         if (recipes == null) {
             return Collections.emptyList();
         }
         return recipes.stream().map(recipe -> globalRecipeService.mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList());
     }
 
-    private List<RecipeUserDto> getRecipesByCategory(Category category, Integer numOfRecipes, Boolean random, User user) {
+    private List<RecipeUserDto> getRecipesByCategory(Integer numOfRecipes, Category category, Boolean random, User user) {
         List<Recipe> recipesByCategory;
+
         // if recipes should be randomize-getting all recipes by category, and then shuffling
         if (Boolean.TRUE.equals(random)) {
             recipesByCategory = getAllRecipesByCategory(category);
@@ -80,11 +86,12 @@ public class RecipeService {
             }
         } else {
             if (numOfRecipes != null) {
-                recipesByCategory = getNumberOfRecipesByCategory(category, numOfRecipes);
+                recipesByCategory = getNumberOfRecipesByCategory(numOfRecipes, category);
             } else {
                 recipesByCategory = getAllRecipesByCategory(category);
             }
         }
+
         if (recipesByCategory == null) {
             return Collections.emptyList();
         }
@@ -92,27 +99,32 @@ public class RecipeService {
     }
 
     private List<Recipe> getAllRecipes() {
+        logger.info("Fetching all recipes by descending recipe ID order");
         return recipesRepository.findRecipesByOrderByIdDesc();
     }
 
     private List<Recipe> getAllRecipesByCategory(Category category) {
+        logger.info("Fetching all recipes by category: {}.", category);
         Optional<List<Recipe>> queryResult = recipesRepository.getRecipesByCategory(category);
         return queryResult.orElse(null);
     }
 
     private List<Recipe> getNumberOfRecipes(Integer numOfRecipes) {
         Pageable pageable = PageRequest.of(0, numOfRecipes);
+        logger.info("Fetching number of recipes: {}.", numOfRecipes);
         return recipesRepository.findNRecipesByOrderByIdDesc(pageable);
     }
 
-    private List<Recipe> getNumberOfRecipesByCategory(Category category, Integer numOfRecipes) {
+    private List<Recipe> getNumberOfRecipesByCategory(Integer numOfRecipes, Category category) {
         Pageable pageable = PageRequest.of(0, numOfRecipes);
+        logger.info("Fetching number of recipes: {} by category: {}.", numOfRecipes, category);
         Optional<List<Recipe>> queryResult = recipesRepository.getNRecipesByCategory(category, pageable);
         return queryResult.orElse(null);
     }
 
     public RecipeUserDto getRecipeById(Long recipeId) {
         User user = userService.getUserFromToken();
+        logger.info("Fetching recipe by ID {}.", recipeId);
         Recipe recipe = globalRecipeService.getRecipeById(recipeId);
         boolean isFavorite = (user != null) && globalRecipeService.isRecipeFavoriteByUser(recipeId, user);
         return new RecipeUserDto(recipe, isFavorite);
@@ -121,11 +133,14 @@ public class RecipeService {
     public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
         Long id = null;
         try {
+            logger.info("Attempting to add a new recipe. Recipe name: {}", recipeCreationDto.getName());
             Recipe recipe = saveRecipe(recipeCreationDto);
             id = recipe.getId();
             elasticService.saveRecipe(recipe);
+            logger.info("Recipe added successfully. Recipe ID: {}", id);
             return recipe;
         } catch (Exception e) {
+            logger.error("Failed to add recipe. Recipe name {}.", recipeCreationDto.getName());
             if (id != null) {
                 handleSaveRecipeRollback(id);
             }
@@ -134,21 +149,26 @@ public class RecipeService {
     }
 
     private Recipe saveRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
+        logger.info("Saving recipe to relational database. Recipe name: {}", recipeCreationDto.getName());
         Recipe recipeCreation = recipeMapper.recipeDtoToRecipe(recipeCreationDto);
         try {
             return recipesRepository.save(recipeCreation);
         } catch (Exception e) {
-            throw new ErrorOccurredException("Failed to add recipe to relational database. Error message:" + e.getMessage());
+            String errorMessage = "Failed to add recipe to relational database. Recipe name: " + recipeCreationDto.getName();
+            logger.error(errorMessage);
+            throw new ErrorOccurredException(errorMessage);
         }
     }
 
     private void handleSaveRecipeRollback(Long recipeId) {
+        logger.info("Rolling back and deleting recipe. Recipe ID: {}.", recipeId);
         recipesRepository.deleteById(recipeId);
     }
 
     public void deleteRecipe(Long recipeId) {
         Recipe recipe = globalRecipeService.getRecipeById(recipeId);
         if (recipe != null) {
+            logger.info("Deleting recipe. Recipe ID: {}, Title: {}", recipeId, recipe.getName());
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
             elasticService.deleteRecipeById(recipeId);
@@ -156,6 +176,7 @@ public class RecipeService {
     }
 
     public void deleteAllRecipes() {
+        logger.info("Deleting all recipes from all DB.");
         favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
         elasticService.deleteAllRecipes();

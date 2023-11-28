@@ -7,9 +7,13 @@ import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.enums.users.Role;
 import com.shahaf.lettucecook.exceptions.AuthenticationException;
 import com.shahaf.lettucecook.exceptions.ResourceAlreadyExistsException;
+import com.shahaf.lettucecook.exceptions.ResourceNotFound;
 import com.shahaf.lettucecook.reposetory.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.var;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,29 +22,37 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static com.shahaf.lettucecook.constants.MessagesConstants.USER_NOT_FOUND_MESSAGE;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    JwtService jwtService;
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     public AuthenticationResponse register(RegisterDto registerDto) {
         usernameOrEmailExistsValidations(registerDto.getUsername(), registerDto.getEmail());
         String username = registerDto.getUsername();
+        String email = registerDto.getEmail();
+
         var user = User.builder()
                 .username(username)
-                .email(registerDto.getEmail())
+                .email(email)
                 .password(passwordEncoder.encode(registerDto.getPassword()))
                 .role(Role.USER)
                 .build();
+
+        logger.info("Saving user. username: {}, email: {}", username, email);
         userRepository.save(user);
+
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -51,10 +63,14 @@ public class AuthenticationService {
     private void usernameOrEmailExistsValidations(String username, String email) {
         Map<String, String> errorMap = new HashMap<>();
         if (userRepository.findByUsername(username).isPresent()) {
-            errorMap.put("username", String.format("Username '%s' is already in use.", username));
+            String errorMessage = String.format("Username '%s' is already in use.", username);
+            logger.error(errorMessage);
+            errorMap.put("username", errorMessage);
         }
         if (userRepository.findByEmail(email).isPresent()) {
-            errorMap.put("email", String.format("Email '%s' is already in use.", email));
+            String errorMessage = String.format("Email '%s' is already in use.", email);
+            logger.error(errorMessage);
+            errorMap.put("email", errorMessage);
         }
         if (!errorMap.isEmpty()) {
             throw new ResourceAlreadyExistsException(errorMap);
@@ -62,19 +78,35 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationDto authenticationDto) {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    authenticationDto.getEmail(), authenticationDto.getPassword()
-            ));
-        } catch (BadCredentialsException e) {
-            throw new AuthenticationException("Username does not exists or password is incorrect");
-        }
-        Optional<User> optionalUser = userRepository.findByEmail(authenticationDto.getEmail());
-        User user = optionalUser.orElseThrow(() -> new NoSuchElementException(USER_NOT_FOUND_MESSAGE));
+        String email = authenticationDto.getEmail();
+        validateAuthentication(email, authenticationDto.getPassword());
+        User user = getUserByEmail(email);
+
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .username(user.getActualUsername())
                 .build();
     }
+
+    private void validateAuthentication(String email, String password) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        } catch (BadCredentialsException e) {
+            String errorMessage = "Username does not exists or password is incorrect";
+            logger.error(errorMessage);
+            throw new AuthenticationException(errorMessage);
+        }
+    }
+
+    public User getUserByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (!user.isPresent()) {
+            String errorMessage = "User not found by email " + email;
+            logger.error(errorMessage);
+            throw new ResourceNotFound(errorMessage);
+        }
+        return user.get();
+    }
+
 }

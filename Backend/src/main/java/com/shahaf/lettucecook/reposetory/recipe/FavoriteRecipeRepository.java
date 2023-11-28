@@ -14,6 +14,9 @@ import java.util.Optional;
 @Repository
 public interface FavoriteRecipeRepository extends JpaRepository<Favorite, Long> {
 
+    @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Favorite f WHERE f.recipe.id = ?1 AND f.user.id = ?2")
+    boolean existsByRecipeIdAndUserId(Long recipeId, Long userId);
+
     @Query("SELECT f FROM Favorite f WHERE f.recipe.id = ?1 AND f.user.id = ?2")
     Optional<Favorite> findByRecipeIdAndUserId(Long recipeId, Long userId);
 
