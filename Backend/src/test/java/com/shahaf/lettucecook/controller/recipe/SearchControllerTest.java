@@ -55,11 +55,50 @@ class SearchControllerTest {
     }
 
     @Test
+    void searchAllRecipes() throws Exception {
+        when(recipeElasticRepository.findAll()).thenReturn(List.of(recipeCake, recipeSalad));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/search")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        List<RecipeUserDto> recipesListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
+        });
+        assertEquals(2, recipesListResponse.size());
+
+        verify(recipeElasticRepository, times(1)).findAll();
+    }
+
+    @Test
+    void searchRecipesByCategory() throws Exception {
+        Category category = Category.SALAD;
+        when(recipeElasticRepository.findByCategories(category)).thenReturn(List.of(recipeSalad));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get(String.format("/api/v1/search?category=%s", category))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        List<RecipeUserDto> recipesListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
+        });
+        Recipe responseRecipe = recipesListResponse.get(0).getRecipe();
+        assertEquals(recipeSalad.getName(), responseRecipe.getName());
+        assertEquals(1, recipesListResponse.size());
+
+        verify(recipeElasticRepository, times(1)).findByCategories(category);
+    }
+
+    @Test
     void searchRecipesBySearchTerm() throws Exception {
         List<RecipeElastic> recipeElasticMockList = List.of(recipeCake, recipeSalad);
         when(recipeElasticRepository.findByNameOrSummaryOrIngredients(searchTerm)).thenReturn(recipeElasticMockList);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/search?searchTerm=" + searchTerm)
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get(String.format("/api/v1/search?searchTerm=%s", searchTerm))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -82,8 +121,8 @@ class SearchControllerTest {
         List<RecipeElastic> recipeElasticMockList = List.of(recipeSalad);
         when(recipeElasticRepository.findByNameOrSummaryOrIngredientsAndCategory(searchTerm, category)).thenReturn(recipeElasticMockList);
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get(
-                                String.format("/api/v1/search?searchTerm=%s&category=%s", searchTerm, category))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get(String.format("/api/v1/search?searchTerm=%s&category=%s", searchTerm, category))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();

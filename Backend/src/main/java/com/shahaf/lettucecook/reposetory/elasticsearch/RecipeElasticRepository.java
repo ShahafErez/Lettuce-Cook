@@ -12,10 +12,6 @@ import java.util.List;
 @Hidden
 @Repository
 public interface RecipeElasticRepository extends ElasticsearchRepository<RecipeElastic, Long> {
-
-    @Override
-    List<RecipeElastic> findAll();
-
     List<RecipeElastic> findByCategories(Category category);
 
     @Query("{\"bool\": {\"should\": [{\"match\": {\"name\": \"?0\"}}, {\"match\": {\"summary\": \"?0\"}}, {\"wildcard\": {\"ingredients\": \"*?0*\"}}]}}")

@@ -13,28 +13,26 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
     @Autowired
     UserRepository userRepository;
-
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public User getUserByUsername(String username) {
-        logger.info("Fetching user {}.", username);
-        Optional<User> user = userRepository.findByUsername(username);
+    public User getUserFromToken() {
+        Object tokenUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(tokenUser instanceof User)) {
+            return null;
+        }
+        Integer userId = Math.toIntExact(((User) tokenUser).getId());
+        return getUserById(userId);
+    }
+
+    private User getUserById(Integer id) {
+        Optional<User> user = userRepository.findById(Math.toIntExact(id));
         if (!user.isPresent()) {
-            String errorMessage = String.format("User %s was not found.", username);
+            String errorMessage = String.format("User %d was not found.", id);
             logger.error(errorMessage);
             throw new ResourceNotFound(errorMessage);
         }
         return user.get();
-    }
-
-    public User getUserFromToken() {
-        Object tokenUser = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (tokenUser instanceof User) {
-            return ((User) tokenUser);
-        }
-        return null;
     }
 }

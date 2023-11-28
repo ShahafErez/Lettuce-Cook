@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ElasticService {
@@ -57,7 +58,8 @@ public class ElasticService {
 
         List<RecipeElastic> queryResult;
         if ((searchTerm == null || searchTerm.isEmpty()) && category == null) {
-            queryResult = recipeElasticRepository.findAll();
+            queryResult = StreamSupport.stream(recipeElasticRepository.findAll()
+                    .spliterator(), false).collect(Collectors.toList());
         } else if (searchTerm == null || searchTerm.isEmpty()) {
             queryResult = recipeElasticRepository.findByCategories(category);
         } else if (category == null) {

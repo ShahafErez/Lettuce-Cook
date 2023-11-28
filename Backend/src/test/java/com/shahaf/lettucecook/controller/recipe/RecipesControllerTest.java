@@ -38,8 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -148,8 +147,9 @@ class RecipesControllerTest {
         mockRecipe.setIngredients(List.of(new Ingredient(null, "ingredient", Unit.CUP, 1F)));
         mockRecipe.setInstructions(List.of(new Instruction(null, 1, "instruction")));
 
+        when(userRepository.findById(1)).thenReturn(Optional.of(mockUser));
         when(recipesRepository.findById(1L)).thenReturn(Optional.of(mockRecipe));
-        when(favoriteRecipeRepository.findByRecipeIdAndUserId(1L, mockUser.getId())).thenReturn(Optional.empty());
+        when(favoriteRecipeRepository.existsByRecipeIdAndUserId(1L, mockUser.getId())).thenReturn(true);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/recipes/get/1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
@@ -165,7 +165,7 @@ class RecipesControllerTest {
         assertEquals("recipe", recipe.getName());
         assertEquals("ingredient", recipe.getIngredients().get(0).getName());
         assertEquals(1, recipe.getInstructions().size());
-        assertFalse(RecipeUserDto.getIsFavoriteByUser());
+        assertTrue(RecipeUserDto.getIsFavoriteByUser());
 
         verify(recipesRepository, times(1)).findById(1L);
         verify(favoriteRecipeRepository, times(1)).existsByRecipeIdAndUserId(1L, mockUser.getId());

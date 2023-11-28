@@ -1,6 +1,5 @@
 package com.shahaf.lettucecook.service.recipe;
 
-import com.shahaf.lettucecook.dto.recipe.FavoriteRecipeDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Favorite;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
@@ -27,36 +26,30 @@ public class FavoriteRecipeService {
     private UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(FavoriteRecipeService.class);
 
-    public List<Recipe> getFavoritesByUser(String username) {
-        Long userId = userService.getUserByUsername(username).getId();
+    public List<Recipe> getFavoritesByUser() {
+        User user = userService.getUserFromToken();
 
-        logger.info("Fetching favorite recipes for user {}.", username);
-        Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(userId);
+        logger.info("Fetching favorite recipes for user {}.", user.getActualUsername());
+        Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(user.getId());
         return favoritesList.map(favorites -> favorites.stream().map(Favorite::getRecipe).collect(Collectors.toList())).orElse(null);
     }
 
-    public void addFavoriteRecipe(String username, Long recipeId) {
-        User user = userService.getUserByUsername(username);
+    public void addFavoriteRecipe(Long recipeId) {
+        User user = userService.getUserFromToken();
         Recipe recipe = globalRecipeService.getRecipeById(recipeId);
-        validateRecipeNotAddedAsFavorite(recipe.getId(), user.getId(), username);
+        validateRecipeNotAddedAsFavorite(recipeId, user.getId());
 
         logger.info("Adding recipe {} as favorite to user {}.", recipe.getId(), user.getActualUsername());
-        favoriteRecipeRepository.save(createNewFavoriteObject(user, recipe));
+        Favorite favorite = new Favorite(recipe, user);
+        favoriteRecipeRepository.save(favorite);
     }
 
-    private void validateRecipeNotAddedAsFavorite(Long recipeId, Long userId, String username) {
+    private void validateRecipeNotAddedAsFavorite(Long recipeId, Long userId) {
         if (favoriteRecipeRepository.findByRecipeIdAndUserId(recipeId, userId).isPresent()) {
-            String errorMessage = String.format("Recipe %d already saved as favorite by user %s", recipeId, username);
+            String errorMessage = String.format("Recipe %d already saved as favorite by user ID %d", recipeId, userId);
             logger.error(errorMessage);
             throw new ResourceAlreadyExistsException(errorMessage);
         }
-    }
-
-    private Favorite createNewFavoriteObject(User user, Recipe recipe) {
-        Favorite favorite = new Favorite();
-        favorite.setUser(user);
-        favorite.setRecipe(recipe);
-        return favorite;
     }
 
     @Transactional
@@ -66,15 +59,12 @@ public class FavoriteRecipeService {
     }
 
     @Transactional
-    public void removeFavoriteRecipe(FavoriteRecipeDto favoriteRecipeDto) {
-        String username = favoriteRecipeDto.getUsername();
-        Long recipeId = favoriteRecipeDto.getRecipeId();
-
-        User user = userService.getUserByUsername(username);
+    public void removeFavoriteRecipe(Long recipeId) {
+        User user = userService.getUserFromToken();
         globalRecipeService.validateRecipeExists(recipeId);
         globalRecipeService.validateRecipeIsFavoriteByUser(recipeId, user);
 
-        logger.info("Removing recipe {} from favorites for user {}.", recipeId, username);
+        logger.info("Removing recipe {} from favorites for user {}.", recipeId, user.getActualUsername());
         favoriteRecipeRepository.deleteByRecipeIdAndUserId(recipeId, user.getId());
 
     }
