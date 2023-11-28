@@ -28,10 +28,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error**").permitAll() // allowing the error message to be shown
-//                        .requestMatchers("/error/**").permitAll() //TODO- check if not needed
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/recipes/get/**", "/api/v1/recipes/get-recipes").permitAll()
-//                        .requestMatchers("/api/v1/recipes/get-recipes").permitAll()
                         .requestMatchers("/api/v1/search**").permitAll()
                         .requestMatchers("/v3/**", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated()
