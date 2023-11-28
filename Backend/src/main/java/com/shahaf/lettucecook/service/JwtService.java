@@ -20,7 +20,6 @@ import static com.shahaf.lettucecook.constants.JwtConstants.TOKEN_EXPIRATION_TIM
 @Service
 public class JwtService {
 
-
     public String extractEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }

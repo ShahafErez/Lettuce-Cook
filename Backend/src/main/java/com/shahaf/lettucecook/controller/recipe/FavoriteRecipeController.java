@@ -1,9 +1,11 @@
 package com.shahaf.lettucecook.controller.recipe;
 
-import com.shahaf.lettucecook.dto.recipe.FavoriteRecipeDto;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
 import com.shahaf.lettucecook.service.recipe.FavoriteRecipeService;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,28 +15,45 @@ import java.util.List;
 
 import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
 
+@Tag(name = "Favorite Recipes", description = "APIs for managing favorite recipes.")
 @RestController
 @RequestMapping(path = PATH_PREFIX + "/favorite")
 public class FavoriteRecipeController {
-
     @Autowired
     private FavoriteRecipeService favoriteRecipeService;
 
-    @GetMapping("/get/{username}")
-    public ResponseEntity<List<Recipe>> getFavoritesByUser(@PathVariable String username) {
-        return new ResponseEntity<>(favoriteRecipeService.getFavoritesByUser(username), HttpStatus.OK);
+    @Operation(summary = "Get Favorite Recipes",
+            description = "Retrieve all favorite recipes for a user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved user's favorite recipes.")})
+    @GetMapping("/get")
+    public ResponseEntity<List<Recipe>> getFavoritesByUser() {
+        return new ResponseEntity<>(favoriteRecipeService.getFavoritesByUser(), HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> addFavoriteRecipe(@Valid @RequestBody FavoriteRecipeDto favoriteRecipeDto) {
-        favoriteRecipeService.addFavoriteRecipe(favoriteRecipeDto);
-        return new ResponseEntity<>("Recipes successfully added to favorites.", HttpStatus.CREATED);
+    @Operation(summary = "Add Recipe to Favorites",
+            description = "Add recipe to a user's favorites.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully added recipe to user's favorites."),
+            @ApiResponse(responseCode = "404", description = "Recipe by the given recipe ID was not found."),
+            @ApiResponse(responseCode = "409", description = "Recipe was already added as favorite by user.")
+    })
+    @PostMapping("/add/{recipeId}")
+    public ResponseEntity<String> addFavoriteRecipe(@PathVariable Long recipeId) {
+        favoriteRecipeService.addFavoriteRecipe(recipeId);
+        return new ResponseEntity<>(String.format("Recipe %d successfully added to favorites by user.", recipeId), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/remove")
-    public ResponseEntity<String> removeFavoriteRecipe(@Valid @RequestBody FavoriteRecipeDto favoriteRecipeDto) {
-        favoriteRecipeService.removeFavoriteRecipe(favoriteRecipeDto);
-        return new ResponseEntity<>(String.format("Recipes %d successfully removed from favorites for user %s.",
-                favoriteRecipeDto.getRecipeId(), favoriteRecipeDto.getUsername()), HttpStatus.OK);
+    @Operation(summary = "Remove Recipe from Favorites",
+            description = "Remove a recipe from user's favorites")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully removed recipe from user's favorites"),
+            @ApiResponse(responseCode = "404", description = "Recipe by the given recipe ID was not found, or recipe is not a favorite by user")
+    })
+    @DeleteMapping("/remove/{recipeId}")
+    public ResponseEntity<String> removeFavoriteRecipe(@PathVariable Long recipeId) {
+        favoriteRecipeService.removeFavoriteRecipe(recipeId);
+        return new ResponseEntity<>(String.format("Recipe %d successfully removed from favorites.", recipeId), HttpStatus.OK);
     }
 }
+

@@ -1,14 +1,10 @@
 export const addToFavorites = async (recipeId) => {
-  return fetch(`${global.dataUrl}/favorite/add`, {
+  return fetch(`${global.dataUrl}/favorite/add/${recipeId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify({
-      recipeId: recipeId,
-      username: localStorage.getItem("username"),
-    }),
     withCredentials: true,
   })
     .then((res) => {
@@ -23,16 +19,12 @@ export const addToFavorites = async (recipeId) => {
 };
 
 export const removeFromFavorites = async (recipeId) => {
-  return fetch(`${global.dataUrl}/favorite/remove`, {
+  return fetch(`${global.dataUrl}/favorite/remove/${recipeId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify({
-      recipeId: recipeId,
-      username: localStorage.getItem("username"),
-    }),
     withCredentials: true,
   })
     .then((res) => {

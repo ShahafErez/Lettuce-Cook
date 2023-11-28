@@ -2,7 +2,6 @@ package com.shahaf.lettucecook.controller.recipe;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.shahaf.lettucecook.dto.recipe.FavoriteRecipeDto;
 import com.shahaf.lettucecook.entity.User;
 import com.shahaf.lettucecook.entity.recipe.Favorite;
 import com.shahaf.lettucecook.entity.recipe.Recipe;
@@ -53,6 +52,7 @@ class FavoriteRecipesControllerTest {
     @MockBean
     private UserRepository userRepository;
     private static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0VXNlckBnbWFpbC5jb20iLCJpYXQiOjE2OTE0ODIxMjEsImV4cCI6MTY5MzYyOTYwNX0.xwskTABCC7hz4JET_D5EHIjS4joAkBcJFHFngEtmB60";
+    private static final Long recipeId = 1L;
     private static User mockUser;
 
     @BeforeEach
@@ -65,19 +65,20 @@ class FavoriteRecipesControllerTest {
         when(jwtService.isTokenValid(JWT_TOKEN, mockUser)).thenReturn(true);
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(mockUser));
         when(userDetailsService.loadUserByUsername(userEmail)).thenReturn(mockUser);
+        when(userRepository.findById(1)).thenReturn(Optional.of(mockUser));
     }
 
     @Test
     void getFavoritesByUser() throws Exception {
         Recipe recipe = new Recipe();
-        recipe.setId(1L);
-        recipe.setName("test recipe");
+        recipe.setId(recipeId);
+        recipe.setName("recipe");
         List<Favorite> mockFavoriteList = List.of(new Favorite(1L, recipe, mockUser));
 
-        when(userRepository.findByUsername(mockUser.getActualUsername())).thenReturn(Optional.of(mockUser));
         when(favoriteRecipeRepository.getFavoritesByUser(mockUser.getId())).thenReturn(Optional.of(mockFavoriteList));
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/favorite/get/" + mockUser.getActualUsername())
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/favorite/get")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -87,133 +88,106 @@ class FavoriteRecipesControllerTest {
         List<Recipe> favoriteListResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
         assertEquals(1, favoriteListResponse.size());
-        assertEquals("test recipe", favoriteListResponse.get(0).getName());
+        assertEquals("recipe", favoriteListResponse.get(0).getName());
 
-        verify(userRepository, times(1)).findByUsername(mockUser.getActualUsername());
-        verify(favoriteRecipeRepository, times(1)).getFavoritesByUser(mockUser.getId());
-    }
-
-    @Test
-    void getFavoritesByUserNotExists() throws Exception {
-        when(userRepository.findByUsername("userNotExists")).thenReturn(Optional.empty());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/favorite/get/userNotExists")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("User not found with username: userNotExists")));
-
-        verify(userRepository, times(1)).findByUsername("userNotExists");
-    }
-
-    @Test
-    void getFavoritesByUserHaveNoFavorites() throws Exception {
-        when(userRepository.findByUsername(mockUser.getActualUsername())).thenReturn(Optional.of(mockUser));
-        when(favoriteRecipeRepository.getFavoritesByUser(mockUser.getId())).thenReturn(Optional.empty());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/favorite/get/" + mockUser.getActualUsername())
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("User testUser doesn't have favorite recipes")));
-
-        verify(userRepository, times(1)).findByUsername(mockUser.getActualUsername());
         verify(favoriteRecipeRepository, times(1)).getFavoritesByUser(mockUser.getId());
     }
 
     @Test
     void addFavoriteRecipe() throws Exception {
-        FavoriteRecipeDto mockfavoriteRecipeDto = new FavoriteRecipeDto();
-        mockfavoriteRecipeDto.setRecipeId(1L);
-        mockfavoriteRecipeDto.setUsername(mockUser.getActualUsername());
-
         Favorite savedFavoriteRecipe = new Favorite();
         Recipe mockRecipe = new Recipe();
-        mockRecipe.setId(1L);
+        mockRecipe.setId(recipeId);
         savedFavoriteRecipe.setRecipe(mockRecipe);
         savedFavoriteRecipe.setUser(mockUser);
 
-        when(userRepository.findByUsername(mockUser.getActualUsername())).thenReturn(Optional.of(mockUser));
-        when(recipesRepository.findById(1L)).thenReturn(Optional.of(mockRecipe));
-        when(favoriteRecipeRepository.findByRecipeIdAndUserId(1L, 1L)).thenReturn(Optional.empty());
+        when(recipesRepository.findById(recipeId)).thenReturn(Optional.of(mockRecipe));
+        when(favoriteRecipeRepository.findByRecipeIdAndUserId(recipeId, 1L)).thenReturn(Optional.empty());
         when(favoriteRecipeRepository.save(any())).thenReturn(savedFavoriteRecipe);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/favorite/add")
+        mockMvc.perform(MockMvcRequestBuilders.
+                        post(String.format("/api/v1/favorite/add/%s", recipeId))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mockfavoriteRecipeDto)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipes successfully added to favorites.")));
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo(
+                        String.format("Recipe %s successfully added to favorites by user.", recipeId)
+                )));
 
-        verify(userRepository, times(1)).findByUsername(mockUser.getActualUsername());
-        verify(recipesRepository, times(1)).findById(1L);
-        verify(favoriteRecipeRepository, times(1)).findByRecipeIdAndUserId(1L, 1L);
+        verify(recipesRepository, times(1)).findById(recipeId);
+        verify(favoriteRecipeRepository, times(1)).findByRecipeIdAndUserId(recipeId, 1L);
         verify(favoriteRecipeRepository, times(1)).save(any());
     }
 
     @Test
-    void addFavoriteRecipeNotExists() throws Exception {
-        FavoriteRecipeDto mockfavoriteRecipeDto = new FavoriteRecipeDto();
-        mockfavoriteRecipeDto.setRecipeId(1L);
-        mockfavoriteRecipeDto.setUsername(mockUser.getActualUsername());
+    void addFavoriteRecipeNotFound() throws Exception {
+        when(recipesRepository.findById(recipeId)).thenReturn(Optional.empty());
 
-        when(userRepository.findByUsername(mockUser.getActualUsername())).thenReturn(Optional.of(mockUser));
-        when(recipesRepository.findById(1L)).thenReturn(Optional.empty());
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/favorite/add")
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(String.format("/api/v1/favorite/add/%s", recipeId))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mockfavoriteRecipeDto)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipe not found with id: 1")));
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo("Recipe not found. ID: 1")));
 
-        verify(userRepository, times(1)).findByUsername(mockUser.getActualUsername());
-        verify(recipesRepository, times(1)).findById(1L);
+        verify(recipesRepository, times(1)).findById(recipeId);
     }
 
     @Test
     void addFavoriteRecipeAlreadyAdded() throws Exception {
-        FavoriteRecipeDto mockfavoriteRecipeDto = new FavoriteRecipeDto();
-        mockfavoriteRecipeDto.setRecipeId(1L);
-        mockfavoriteRecipeDto.setUsername(mockUser.getActualUsername());
-
         Recipe mockRecipe = new Recipe();
-        mockRecipe.setId(1L);
-        Favorite existsFavorite = new Favorite(1L, mockRecipe, mockUser);
+        mockRecipe.setId(recipeId);
+        Favorite existsFavorite = new Favorite(recipeId, mockRecipe, mockUser);
 
-        when(userRepository.findByUsername(mockUser.getActualUsername())).thenReturn(Optional.of(mockUser));
-        when(recipesRepository.findById(1L)).thenReturn(Optional.of(mockRecipe));
-        when(favoriteRecipeRepository.findByRecipeIdAndUserId(1L, 1L)).thenReturn(Optional.of(existsFavorite));
+        when(recipesRepository.findById(recipeId)).thenReturn(Optional.of(mockRecipe));
+        when(favoriteRecipeRepository.findByRecipeIdAndUserId(recipeId, mockUser.getId())).thenReturn(Optional.of(existsFavorite));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/favorite/add")
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post(String.format("/api/v1/favorite/add/%s", recipeId))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mockfavoriteRecipeDto)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isConflict())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipe 1 already saved as favorite by user testUser")));
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo(
+                        String.format("Recipe %s already saved as favorite by user ID %s", recipeId, mockUser.getId())))
+                );
 
-        verify(userRepository, times(1)).findByUsername(mockUser.getActualUsername());
-        verify(recipesRepository, times(1)).findById(1L);
-        verify(favoriteRecipeRepository, times(1)).findByRecipeIdAndUserId(1L, 1L);
+        verify(recipesRepository, times(1)).findById(recipeId);
+        verify(favoriteRecipeRepository, times(1)).findByRecipeIdAndUserId(recipeId, mockUser.getId());
     }
 
     @Test
     void removeFavoriteRecipe() throws Exception {
-        FavoriteRecipeDto mockfavoriteRecipeDto = new FavoriteRecipeDto();
-        mockfavoriteRecipeDto.setRecipeId(1L);
-        mockfavoriteRecipeDto.setUsername(mockUser.getActualUsername());
+        when(recipesRepository.existsById(recipeId)).thenReturn(true);
+        when(favoriteRecipeRepository.existsByRecipeIdAndUserId(recipeId, mockUser.getId())).thenReturn(true);
+        doNothing().when(favoriteRecipeRepository).deleteByRecipeIdAndUserId(recipeId, mockUser.getId());
 
-        when(userRepository.findByUsername(mockUser.getActualUsername())).thenReturn(Optional.of(mockUser));
-        doNothing().when(favoriteRecipeRepository).deleteByRecipeIdAndUserId(1L, mockUser.getId());
-
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/favorite/remove")
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete(String.format("/api/v1/favorite/remove/%s", recipeId))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(mockfavoriteRecipeDto)))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Recipes 1 successfully removed from favorites for user testUser.")));
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo(
+                        String.format("Recipe %s successfully removed from favorites.", recipeId))));
 
-        verify(userRepository, times(1)).findByUsername(mockUser.getActualUsername());
-        verify(favoriteRecipeRepository, times(1)).deleteByRecipeIdAndUserId(1L, mockUser.getId());
+        verify(recipesRepository, times(1)).existsById(recipeId);
+        verify(favoriteRecipeRepository, times(1)).existsByRecipeIdAndUserId(recipeId, mockUser.getId());
+        verify(favoriteRecipeRepository, times(1)).deleteByRecipeIdAndUserId(recipeId, mockUser.getId());
+    }
+
+    @Test
+    void removeFavoriteRecipeWasNotFavoriteByUser() throws Exception {
+        when(recipesRepository.existsById(recipeId)).thenReturn(true);
+        when(favoriteRecipeRepository.existsByRecipeIdAndUserId(recipeId, mockUser.getId())).thenReturn(false);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete(String.format("/api/v1/favorite/remove/%s", recipeId))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + JWT_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo(
+                        String.format("Recipe %d is not favorite by user %s.", recipeId, mockUser.getActualUsername()))));
+
+        verify(recipesRepository, times(1)).existsById(recipeId);
+        verify(favoriteRecipeRepository, times(1)).existsByRecipeIdAndUserId(recipeId, mockUser.getId());
     }
 }

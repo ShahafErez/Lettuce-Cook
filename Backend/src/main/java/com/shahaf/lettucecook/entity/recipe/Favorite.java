@@ -21,4 +21,9 @@ public class Favorite {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Favorite(Recipe recipe, User user) {
+        this.recipe = recipe;
+        this.user = user;
+    }
 }

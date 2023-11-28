@@ -42,13 +42,16 @@ class AuthenticationControllerTest {
     private UserRepository userRepository;
     @MockBean
     private AuthenticationManager authenticationManager;
+    private final String email = "user@gmail.com";
+    private final String username = "user";
+    private final String password = "abc";
 
     @Test
     void register() throws Exception {
-        RegisterDto mockRegisterDto = new RegisterDto("user", "user@gmail.com", "abc");
+        RegisterDto mockRegisterDto = new RegisterDto(username, email, password);
 
-        when(userRepository.findByUsername("user")).thenReturn(Optional.empty());
-        when(userRepository.findByEmail("user@gmail.com")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(username)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -60,17 +63,17 @@ class AuthenticationControllerTest {
         });
         assertNotNull(authenticationResponse.getToken());
 
-        verify(userRepository, times(1)).findByUsername("user");
-        verify(userRepository, times(1)).findByEmail("user@gmail.com");
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).findByEmail(email);
     }
 
     @Test
     void registerUsernameAndEmailAlreadyExists() throws Exception {
-        RegisterDto mockRegisterDto = new RegisterDto("user", "user@gmail.com", "abc");
-        User mockUser = new User(1L, "user", "user@gmail.com", "abc", Role.USER);
+        RegisterDto mockRegisterDto = new RegisterDto(username, email, password);
+        User mockUser = new User(1L, username, email, password, Role.USER);
 
-        when(userRepository.findByUsername("user")).thenReturn(Optional.of(mockUser));
-        when(userRepository.findByEmail("user@gmail.com")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByUsername(username)).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -80,22 +83,21 @@ class AuthenticationControllerTest {
         String content = result.getResponse().getContentAsString();
         Map<String, String> errorsResponse = new ObjectMapper().readValue(content, new TypeReference<>() {
         });
-        assertEquals("Email 'user@gmail.com' is already in use.", errorsResponse.get("email"));
-        assertEquals("Username 'user' is already in use.", errorsResponse.get("username"));
+        assertEquals(String.format("Email '%s' is already in use.", email), errorsResponse.get("email"));
+        assertEquals(String.format("Username '%s' is already in use.", username), errorsResponse.get("username"));
 
-        verify(userRepository, times(1)).findByUsername("user");
-        verify(userRepository, times(1)).findByEmail("user@gmail.com");
+        verify(userRepository, times(1)).findByUsername(username);
+        verify(userRepository, times(1)).findByEmail(email);
     }
-
 
     @Test
     void authenticate() throws Exception {
-        AuthenticationDto mockAuthenticationDto = new AuthenticationDto("user@gmail.com", "abc");
-        User mockUser = new User(1L, "user", "user@gmail.com", "abc", Role.USER);
+        AuthenticationDto mockAuthenticationDto = new AuthenticationDto(email, password);
+        User mockUser = new User(1L, username, email, password, Role.USER);
         UsernamePasswordAuthenticationToken MockAuthentication = new UsernamePasswordAuthenticationToken(mockUser, null);
 
         when(authenticationManager.authenticate(any())).thenReturn(MockAuthentication);
-        when(userRepository.findByEmail("user@gmail.com")).thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(mockUser));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,13 +110,12 @@ class AuthenticationControllerTest {
         assertNotNull(authenticationResponse.getToken());
 
         verify(authenticationManager, times(1)).authenticate(any());
-        verify(userRepository, times(1)).findByEmail("user@gmail.com");
+        verify(userRepository, times(1)).findByEmail(email);
     }
 
     @Test
-    void authenticateFailedAuthenticationManager() throws Exception {
-        AuthenticationDto mockAuthenticationDto = new AuthenticationDto("user@gmail.com", "abc");
-        User mockUser = new User(1L, "user", "user@gmail.com", "abc", Role.USER);
+    void authenticateWrongAuthenticationDetails() throws Exception {
+        AuthenticationDto mockAuthenticationDto = new AuthenticationDto(email, password);
 
         when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException(""));
 
@@ -122,10 +123,30 @@ class AuthenticationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(mockAuthenticationDto)))
                 .andExpect(MockMvcResultMatchers.status().isUnauthorized())
-                .andExpect(MockMvcResultMatchers.content().string(Matchers.containsString("Username does not exists or password is incorrect")));
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo("Username does not exists or password is incorrect")));
 
         verify(authenticationManager, times(1)).authenticate(any());
-
     }
+
+    @Test
+    void authenticateEmailNotFound() throws Exception {
+        AuthenticationDto mockAuthenticationDto = new AuthenticationDto(email, password);
+        User mockUser = new User(1L, username, email, password, Role.USER);
+        UsernamePasswordAuthenticationToken MockAuthentication = new UsernamePasswordAuthenticationToken(mockUser, null);
+
+        when(authenticationManager.authenticate(any())).thenReturn(MockAuthentication);
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(mockAuthenticationDto)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.content().string(Matchers.equalTo(
+                        "User not found by email " + email)));
+
+        verify(authenticationManager, times(1)).authenticate(any());
+        verify(userRepository, times(1)).findByEmail(email);
+    }
+
 
 }
