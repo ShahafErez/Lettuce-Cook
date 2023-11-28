@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +32,14 @@ public class FavoriteRecipeService {
 
         logger.info("Fetching favorite recipes for user {}.", user.getActualUsername());
         Optional<List<Favorite>> favoritesList = favoriteRecipeRepository.getFavoritesByUser(user.getId());
-        return favoritesList.map(favorites -> favorites.stream().map(Favorite::getRecipe).collect(Collectors.toList())).orElse(null);
+        return favoritesList.map(favorites -> favorites.stream()
+                        .map(Favorite::getRecipe)
+                        .collect(Collectors.toList()))
+                .map(list -> {
+                    Collections.reverse(list);
+                    return list;
+                })
+                .orElse(null);
     }
 
     public void addFavoriteRecipe(Long recipeId) {
