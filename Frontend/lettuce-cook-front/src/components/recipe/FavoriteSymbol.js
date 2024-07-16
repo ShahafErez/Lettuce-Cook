@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 import {
   addToFavorites,
   removeFromFavorites,
@@ -7,11 +8,13 @@ import {
 
 export default function Favorite(props) {
   const navigate = useNavigate();
+  let userLoggedIn = useLocalStorage("username") != null;
+
   const [isFavorite, setIsFavorite] = useState(props.isFavorite);
   let recipeId = props.recipeId;
-  let userLoggedIn = props.userLoggedIn;
 
-  async function handleClick() {
+  async function handleClick(event) {
+    event.stopPropagation();
     if (!userLoggedIn) {
       navigate("/login");
     }

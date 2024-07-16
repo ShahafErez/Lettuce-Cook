@@ -44,11 +44,7 @@ export default function Recipe() {
         </div>
         <div className="col-8" style={{ textAlign: "left" }}>
           <h1>{name}</h1>
-          <Favorite
-            isFavorite={isFavoriteByUser}
-            userLoggedIn={userLoggedIn}
-            recipeId={recipeId}
-          />
+          <Favorite isFavorite={isFavoriteByUser} recipeId={recipeId} />
 
           <p style={{ width: "90%" }}>{summary}</p>
 
