@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.shahaf.lettucecook.constants.JwtConstants.ALLOWED_CLIENT_URL;
 
+//TODO- global?
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
     @Override
