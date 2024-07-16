@@ -6,7 +6,7 @@ import {
   removeFromFavorites,
 } from "../../services/favoriteService";
 
-export default function Favorite(props) {
+export default function FavoriteButton(props) {
   const navigate = useNavigate();
   let userLoggedIn = useLocalStorage("username") != null;
 
