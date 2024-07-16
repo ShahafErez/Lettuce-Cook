@@ -22,7 +22,7 @@ public class GlobalRecipeService {
     private static final Logger logger = LoggerFactory.getLogger(GlobalRecipeService.class);
 
     public Recipe getRecipeById(Long id) {
-        logger.info("Fetching recipe {}.", id);
+        logger.info("Fetching recipe {} from repository.", id);
         Optional<Recipe> recipe = recipesRepository.findById(id);
         if (!recipe.isPresent()) {
             String errorMessage = "Recipe not found. ID: " + id;
