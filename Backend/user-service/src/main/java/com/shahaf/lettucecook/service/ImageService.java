@@ -1,7 +1,6 @@
 package com.shahaf.lettucecook.service;
 
 import com.shahaf.lettucecook.exceptions.ErrorOccurredException;
-import com.shahaf.lettucecook.service.recipe.ElasticService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;

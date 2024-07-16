@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>com.shahaf</groupId>
-    <artifactId>lettuce-cook</artifactId>
+    <artifactId>user-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>lettuce-cook</name>
     <description>Demo project for Spring Boot</description>
