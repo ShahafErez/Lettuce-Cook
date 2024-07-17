@@ -1,10 +1,10 @@
-package com.shahaf.auth_service;
+package com.shahaf.recipe_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApplicationTests {
+class RecipeApplicationTests {
 
 	@Test
 	void contextLoads() {
