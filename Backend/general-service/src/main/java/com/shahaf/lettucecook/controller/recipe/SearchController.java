@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
-import static utils.EnumConverter.stringToEnum;
+import static com.shahaf.lettucecook.utils.EnumConverter.stringToEnum;
 @Tag(name = "Search", description = "APIs for searching and filtering recipes")
 @RestController
 @RequestMapping(path = PATH_PREFIX + "/search")

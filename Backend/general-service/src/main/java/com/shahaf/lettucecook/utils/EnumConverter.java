@@ -1,4 +1,4 @@
-package utils;
+package com.shahaf.lettucecook.utils;
 
 import com.shahaf.lettucecook.exceptions.BadRequestException;
 

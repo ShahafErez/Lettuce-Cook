@@ -22,7 +22,7 @@ import java.util.List;
 
 import static com.shahaf.lettucecook.constants.ApplicationConstants.CACHE_RECIPES;
 import static com.shahaf.lettucecook.constants.ApplicationConstants.PATH_PREFIX;
-import static utils.EnumConverter.stringToEnum;
+import static com.shahaf.lettucecook.utils.EnumConverter.stringToEnum;
 
 @Tag(name = "Recipes", description = "All APIs related to recipes")
 @RestController
