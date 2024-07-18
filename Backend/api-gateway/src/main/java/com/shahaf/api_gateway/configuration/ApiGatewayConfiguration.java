@@ -14,6 +14,7 @@ public class ApiGatewayConfiguration {
     public RouteLocator gatewayRouter(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route(p -> p.path(PATH_PREFIX + "/recipes/**").uri("lb://recipe-service"))
+                .route(p -> p.path(PATH_PREFIX + "/auth/**").uri("lb://auth-service"))
                 .build();
     }
 }
