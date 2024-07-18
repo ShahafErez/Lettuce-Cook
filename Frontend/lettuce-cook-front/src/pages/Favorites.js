@@ -6,7 +6,7 @@ import useFetch from "../hooks/useFetch";
 
 export default function Favorites() {
   const { isLoading, isError, data } = useFetch(
-    `${global.dataUrl}/favorite/get`
+    `${global.dataUrl}/favorite/get/${localStorage.getItem("username")}`
   );
 
   if (isLoading) {
