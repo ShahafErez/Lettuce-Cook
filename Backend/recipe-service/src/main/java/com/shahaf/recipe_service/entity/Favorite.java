@@ -1,4 +1,4 @@
-package com.shahaf.favorite_recipe_service.entity;
+package com.shahaf.recipe_service.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,15 +14,12 @@ public class Favorite {
     @Id
     @GeneratedValue
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "recipe_id")
-    private Recipe recipe; // TODO- change to recipeId
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private Long userId; // TODO- get form gateway
+    private Long recipeId;
+    private String username;
 
-    public Favorite(Recipe recipe, Long userId) {
-        this.recipe = recipe;
-        this.userId = userId;
+    public Favorite(Long recipeId, String username) {
+        this.recipeId = recipeId;
+        this.username = username;
     }
 }

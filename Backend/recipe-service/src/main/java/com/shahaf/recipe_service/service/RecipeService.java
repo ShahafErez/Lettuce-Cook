@@ -18,10 +18,13 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class RecipeService {
+    @Autowired
+    FavoriteRecipeService favoriteRecipeService;
     @Autowired
     RecipesRepository recipesRepository;
     @Autowired
@@ -59,7 +62,6 @@ public class RecipeService {
             return Collections.emptyList();
         }
         return recipes;
-//        return recipes.stream().map(recipe -> globalRecipeService.mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList());
     }
 
     private List<Recipe> getRecipesByCategory(Integer numOfRecipes, Category category, Boolean random) {
@@ -83,11 +85,7 @@ public class RecipeService {
             }
         }
 
-        if (recipesByCategory == null) {
-            return Collections.emptyList();
-        }
-        return recipesByCategory;
-//        return recipesByCategory.stream().map(recipe -> globalRecipeService.mapRecipeToRecipeUserDto(recipe, user)).collect(Collectors.toList());
+        return Objects.requireNonNullElse(recipesByCategory, Collections.emptyList());
     }
 
     private List<Recipe> getAllRecipes() {
@@ -164,18 +162,19 @@ public class RecipeService {
         Recipe recipe = getRecipeById(recipeId);
         if (recipe != null) {
             logger.info("Deleting recipe. Recipe ID: {}, Title: {}", recipeId, recipe.getName());
-//            favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId); //TODO- CALL
+            favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
-//            elasticService.deleteRecipeById(recipeId); // TODO-CALL
+//            elasticService.deleteRecipeById(recipeId); // TODO- elastic
         }
     }
 
     public void deleteAllRecipes() {
         logger.info("Deleting all recipes from all DB.");
-//        favoriteRecipeService.deleteAllFavorites(); //TODO
+        favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
-//        elasticService.deleteAllRecipes(); // TODO
+//        elasticService.deleteAllRecipes(); // TODO- elastic
     }
+
 
 
 }

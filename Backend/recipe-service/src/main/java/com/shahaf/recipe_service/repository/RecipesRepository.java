@@ -24,4 +24,6 @@ public interface RecipesRepository extends JpaRepository<Recipe, Long> {
 
     @Query("SELECT r FROM Recipe r WHERE ?1 MEMBER OF r.categories")
     Optional<List<Recipe>> getNRecipesByCategory(Category category, Pageable pageable);
+
+    List<Recipe> findByIdIn(List<Long> recipeIds);
 }
