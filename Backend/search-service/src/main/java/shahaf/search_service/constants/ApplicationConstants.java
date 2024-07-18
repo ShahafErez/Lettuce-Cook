@@ -1,4 +1,4 @@
-package com.shahaf.recipe_service.constants;
+package shahaf.search_service.constants;
 
 public class ApplicationConstants {
     private ApplicationConstants() {
@@ -6,5 +6,4 @@ public class ApplicationConstants {
     }
 
     public static final String PATH_PREFIX = "api/v1";
-    public static final String CACHE_RECIPES = "recipes";
 }
