@@ -24,6 +24,9 @@ export default function Recipe() {
     return <Error message={`for recipe ${recipeId}`} />;
   }
 
+  console.log("data ", data);
+  console.log("data.recipe ", data.recipe);
+
   let {
     name,
     summary,
@@ -32,7 +35,7 @@ export default function Recipe() {
     pictureUrl,
     ingredients,
     instructions,
-  } = data.recipe;
+  } = data;
   let isFavoriteByUser = userLoggedIn && data.isFavoriteByUser;
 
   return (

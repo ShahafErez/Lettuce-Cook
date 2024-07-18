@@ -29,10 +29,10 @@ export default function RecipesList(props) {
         <React.Fragment>
           <div className="row row-cols-1 row-cols-md-4 g-4">
             {data.map((recipeInfo) => (
-              <div className="col" key={recipeInfo.recipe.id}>
+              <div className="col" key={recipeInfo.id}>
                 <RecipePreview
-                  recipe={recipeInfo.recipe}
-                  isFavoriteByUser={recipeInfo.isFavoriteByUser}
+                  recipe={recipeInfo}
+                  // isFavoriteByUser={recipeInfo.isFavoriteByUser}
                 />
               </div>
             ))}
