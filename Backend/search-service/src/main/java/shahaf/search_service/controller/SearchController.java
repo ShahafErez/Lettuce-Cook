@@ -5,16 +5,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import shahaf.search_service.entity.Recipe;
 import shahaf.search_service.enums.Category;
-import shahaf.search_service.service.ElasticService;
+import shahaf.search_service.service.RecipeElasticService;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ import static shahaf.search_service.utils.EnumConverter.stringToEnum;
 public class SearchController {
 
     @Autowired
-    ElasticService elasticService;
+    RecipeElasticService recipeElasticService;
 
     @Operation(summary = "Search Recipes",
             description = "Search for recipes based on a search term, with optional filtering by category")
@@ -39,6 +37,25 @@ public class SearchController {
     public ResponseEntity<List<Recipe>> searchRecipes(
             @RequestParam(required = false) String searchTerm,
             @RequestParam(required = false) String category) {
-        return new ResponseEntity<>(elasticService.searchRecipes(searchTerm, stringToEnum(category, Category.class)), HttpStatus.OK);
+        return new ResponseEntity<>(recipeElasticService.searchRecipes(searchTerm, stringToEnum(category, Category.class)), HttpStatus.OK);
     }
+
+    @PostMapping()
+    public ResponseEntity<String> addRecipeToElastic(@Valid @RequestBody Recipe recipe){
+        recipeElasticService.addRecipeToElastic(recipe);
+        return new ResponseEntity<>("Recipe added successfully to Elasticsearch", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{recipeId}")
+    public ResponseEntity<String> removeRecipeFromElastic(@PathVariable Long recipeId){
+        recipeElasticService.deleteRecipeById(recipeId);
+        return new ResponseEntity<>("Recipe successfully removed from Elasticsearch", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/all")
+    public ResponseEntity<String> removeAllRecipesFromElastic(){
+        recipeElasticService.deleteAllRecipes();
+        return new ResponseEntity<>("All recipes successfully removed from Elasticsearch", HttpStatus.OK);
+    }
+
 }

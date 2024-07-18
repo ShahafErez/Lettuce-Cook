@@ -17,15 +17,15 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class ElasticService {
+public class RecipeElasticService {
     @Autowired
     RecipeElasticRepository recipeElasticRepository;
     @Autowired
     RecipeElasticMapper recipeElasticMapper;
 
-    private static final Logger logger = LoggerFactory.getLogger(ElasticService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RecipeElasticService.class);
 
-    public void saveRecipe(Recipe recipe) {
+    public void addRecipeToElastic(Recipe recipe) {
         try {
             logger.info("Saving recipe to Elastic");
             recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(recipe));
