@@ -1,13 +1,13 @@
-package com.shahaf.auth_service.reposetory;
+package com.shahaf.api_gateway.repository;
 
-import com.shahaf.auth_service.entity.User;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.shahaf.api_gateway.entity.User;
+//import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Hidden
+//@Hidden
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByEmail(String email);

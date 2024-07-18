@@ -1,6 +1,6 @@
-package com.shahaf.auth_service.config;
+package com.shahaf.api_gateway.configuration;
 
-import com.shahaf.auth_service.repository.UserRepository;
+import com.shahaf.api_gateway.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,15 +1,15 @@
-package com.shahaf.auth_service.service;
+package com.shahaf.api_gateway.service;
 
 
-import com.shahaf.auth_service.dto.AuthenticationDto;
-import com.shahaf.auth_service.dto.AuthenticationResponse;
-import com.shahaf.auth_service.dto.RegisterDto;
-import com.shahaf.auth_service.entity.User;
-import com.shahaf.auth_service.enums.Role;
-import com.shahaf.auth_service.exceptions.AuthenticationException;
-import com.shahaf.auth_service.exceptions.ResourceAlreadyExistsException;
-import com.shahaf.auth_service.exceptions.ResourceNotFound;
-import com.shahaf.auth_service.repository.UserRepository;
+import com.shahaf.api_gateway.dto.AuthenticationDto;
+import com.shahaf.api_gateway.dto.AuthenticationResponse;
+import com.shahaf.api_gateway.dto.RegisterDto;
+import com.shahaf.api_gateway.entity.User;
+import com.shahaf.api_gateway.enums.Role;
+import com.shahaf.api_gateway.exceptions.AuthenticationException;
+import com.shahaf.api_gateway.exceptions.ResourceAlreadyExistsException;
+import com.shahaf.api_gateway.exceptions.ResourceNotFound;
+import com.shahaf.api_gateway.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
