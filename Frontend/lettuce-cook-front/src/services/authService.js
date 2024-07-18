@@ -1,8 +1,10 @@
+let authUrl = "http://localhost:8085/api/v1";
+
 export const login = async (email, password) => {
   let isLoggedInSuccessfully = false;
   let response;
 
-  await fetch(`${global.dataUrl}/auth/authenticate`, {
+  await fetch(`${authUrl}/auth/authenticate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,7 +39,7 @@ export const register = async (body) => {
   let isRegisteredSuccessfully = false;
   let response = null;
 
-  await fetch(`${global.dataUrl}/auth/register`, {
+  await fetch(`${authUrl}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
