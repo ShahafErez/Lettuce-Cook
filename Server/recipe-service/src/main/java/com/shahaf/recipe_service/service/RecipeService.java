@@ -136,11 +136,7 @@ public class RecipeService {
             logger.info("Attempting to add a new recipe. Recipe name: {}", recipeCreationDto.getName());
             Recipe recipe = saveRecipe(recipeCreationDto);
             recipeId = recipe.getId();
-            try {
-                addRecipeToElasticsearchService(recipe);
-            } catch (ErrorOccurredException e) {
-                handleSaveRecipeRollback(recipeId);
-            }
+            addRecipeToElasticsearchService(recipe);
             logger.info("Recipe added successfully. Recipe ID: {}", recipeId);
             return recipe;
         } catch (Exception e) {
@@ -161,7 +157,7 @@ public class RecipeService {
         logger.info("Sending http request to search service in url: {} to add recipe {}", SEARCH_SERVICE_URL, recipe.getId());
         HttpStatusCode statusCode = response.getStatusCode();
         if (statusCode != HttpStatus.CREATED) {
-            throw new ErrorOccurredException("Recipe not added in Elastic");
+            throw new ErrorOccurredException("Adding recipe failed due to issue adding recipe to Elastic.");
         }
     }
 
