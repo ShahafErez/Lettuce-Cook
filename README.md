@@ -1,5 +1,5 @@
 <p align="center">
-<img src="client/public/images/logo.png" width="250px"/>
+<img src="Client/public/images/logo.png" width="250px"/>
 </p>
 
 # Lettuce Cook
@@ -52,29 +52,29 @@ Follow these steps to get Lettuce Cook up and running:
 ## Demos
 
 1. **Home Page:**
-   <img src="client/public/demo/home.gif" width="800px"/>
+   <img src="Client/public/demo/home.gif" width="800px"/>
 
    - Explore randomized, newest, and category-based recipes.
    - Start with the default category ("Dinner"), switch to another ("Lunch"), and navigate to a dedicated page for all recipes in that category.
 
 2. **Recipe Page:**
-   <img src="client/public/demo/recipe-page.png" width="800px"/>
+   <img src="Client/public/demo/recipe-page.png" width="800px"/>
 
    - Display a recipe with comprehensive details, including ingredients, instructions, dietary restrictions, ingredient count, making time, and serving size.
 
 3. **Search Page:**
-   <img src="client/public/demo/search.gif" width="800px"/>
+   <img src="Client/public/demo/search.gif" width="800px"/>
 
    - Perform a search by term (e.g., "lettuce") and customize results by adding a category filter.
 
 4. **Register Page:**
-   <img src="client/public/demo/register.png" width="800px"/>
+   <img src="Client/public/demo/register.png" width="800px"/>
 
    - Sign up for an account using a user-friendly registration page.
    - Note: The login page follows a similar design and functionality for a seamless user experience.
 
 5. **Favorite Recipes Page:**
-   <img src="client/public/demo/favorite-recipes.png" width="800px"/>
+   <img src="Client/public/demo/favorite-recipes.png" width="800px"/>
 
    - View a personalized list of all favorite recipes.
    - Note: Favorite recipes are personal to each logged-in user and are accessible only to users with an active account.
