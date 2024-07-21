@@ -43,7 +43,7 @@ public class SearchController {
     @PostMapping()
     public ResponseEntity<String> addRecipeToElastic(@Valid @RequestBody Recipe recipe){
         recipeElasticService.addRecipeToElastic(recipe);
-        return new ResponseEntity<>("Recipe added successfully to Elasticsearch", HttpStatus.OK);
+        return new ResponseEntity<>("Recipe added successfully to Elasticsearch", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{recipeId}")

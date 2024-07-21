@@ -7,4 +7,5 @@ public class ApplicationConstants {
 
     public static final String PATH_PREFIX = "api/v1";
     public static final String CACHE_RECIPES = "recipes";
+    public static final String SEARCH_SERVICE_URL = "http://localhost:8086/api/v1/search";
 }

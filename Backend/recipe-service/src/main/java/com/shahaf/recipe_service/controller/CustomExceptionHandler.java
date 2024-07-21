@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
-    // TODO- check what's relevant
 
     @ExceptionHandler(value = ResourceNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

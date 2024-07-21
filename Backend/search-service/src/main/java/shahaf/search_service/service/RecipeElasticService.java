@@ -26,14 +26,16 @@ public class RecipeElasticService {
     private static final Logger logger = LoggerFactory.getLogger(RecipeElasticService.class);
 
     public void addRecipeToElastic(Recipe recipe) {
+        Long recipeId = recipe.getId();
         try {
-            logger.info("Saving recipe to Elastic");
+            logger.info("Saving recipe {} to Elastic", recipeId);
             recipeElasticRepository.save(recipeElasticMapper.recipeToElasticRecipe(recipe));
         } catch (Exception e) {
-            String errorMessage = String.format("Failed to add recipe %d to Elastic", recipe.getId());
+            String errorMessage = String.format("Failed to add recipe %d to Elastic", recipeId);
             logger.error(errorMessage);
             throw new ErrorOccurredException(errorMessage);
         }
+        logger.info("successfully saved recipe {} to Elastic", recipeId);
     }
 
     public void deleteRecipeById(Long id) {

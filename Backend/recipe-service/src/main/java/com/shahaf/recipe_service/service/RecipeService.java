@@ -13,13 +13,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import static com.shahaf.recipe_service.constants.ApplicationConstants.SEARCH_SERVICE_URL;
 
 @Service
 public class RecipeService {
@@ -29,6 +33,9 @@ public class RecipeService {
     RecipesRepository recipesRepository;
     @Autowired
     RecipeMapper recipeMapper;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(RecipeService.class);
 
@@ -123,21 +130,38 @@ public class RecipeService {
         return recipe.get();
     }
 
-    public Recipe addRecipe(RecipeCreationDto recipeCreationDto) throws IOException {
-        Long id = null;
+    public Recipe addRecipe(RecipeCreationDto recipeCreationDto) {
+        Long recipeId = null;
         try {
             logger.info("Attempting to add a new recipe. Recipe name: {}", recipeCreationDto.getName());
             Recipe recipe = saveRecipe(recipeCreationDto);
-            id = recipe.getId();
-//            elasticService.saveRecipe(recipe); // TODO- save in elastic
-            logger.info("Recipe added successfully. Recipe ID: {}", id);
+            recipeId = recipe.getId();
+            try {
+                addRecipeToElasticsearchService(recipe);
+            } catch (ErrorOccurredException e) {
+                handleSaveRecipeRollback(recipeId);
+            }
+            logger.info("Recipe added successfully. Recipe ID: {}", recipeId);
             return recipe;
         } catch (Exception e) {
             logger.error("Failed to add recipe. Recipe name {}.", recipeCreationDto.getName());
-            if (id != null) {
-                handleSaveRecipeRollback(id);
+            if (recipeId != null) {
+                handleSaveRecipeRollback(recipeId);
             }
-            throw e;
+            throw new ErrorOccurredException(e.getMessage());
+        }
+    }
+
+    private void addRecipeToElasticsearchService(Recipe recipe) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Recipe> requestEntity = new HttpEntity<>(recipe, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(SEARCH_SERVICE_URL, HttpMethod.POST, requestEntity, String.class);
+        logger.info("Sending http request to search service in url: {} to add recipe {}", SEARCH_SERVICE_URL, recipe.getId());
+        HttpStatusCode statusCode = response.getStatusCode();
+        if (statusCode != HttpStatus.CREATED) {
+            throw new ErrorOccurredException("Recipe not added in Elastic");
         }
     }
 
@@ -164,7 +188,8 @@ public class RecipeService {
             logger.info("Deleting recipe. Recipe ID: {}, Title: {}", recipeId, recipe.getName());
             favoriteRecipeService.deleteAllFavoritesByRecipe(recipeId);
             recipesRepository.deleteById(recipeId);
-//            elasticService.deleteRecipeById(recipeId); // TODO- elastic
+            String deleteRecipeUrl = SEARCH_SERVICE_URL + "/" + recipeId;
+            deleteFromElastic(deleteRecipeUrl);
         }
     }
 
@@ -172,9 +197,16 @@ public class RecipeService {
         logger.info("Deleting all recipes from all DB.");
         favoriteRecipeService.deleteAllFavorites();
         recipesRepository.deleteAll();
-//        elasticService.deleteAllRecipes(); // TODO- elastic
+        String deleteAllRecipesUrl = SEARCH_SERVICE_URL + "/all";
+        deleteFromElastic(deleteAllRecipesUrl);
     }
 
-
-
+    private void deleteFromElastic(String url) {
+        logger.info("Sending http request to search service in url: {}", url);
+        try {
+            restTemplate.delete(url);
+        } catch (Exception e) {
+            throw new ErrorOccurredException(e.getMessage());
+        }
+    }
 }
