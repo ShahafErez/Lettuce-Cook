@@ -1,0 +1,240 @@
+/* Define styles for components */
+
+/* Loading */
+.loading {
+  margin-bottom: 10px;
+}
+
+.loading img {
+  height: 70px;
+}
+
+/* Navbar */
+#navbar {
+  padding: 0px;
+}
+
+.navbar {
+  font-size: 22px;
+  color: black;
+}
+
+.navbar .container {
+  padding: 0px;
+  margin: 0px;
+}
+
+.navbar .nav-item {
+  margin-left: 10px;
+}
+
+.navbar .navbar-brand {
+  padding: 0px;
+  margin-left: 5px;
+  margin-right: 3px;
+}
+
+.navbar-users {
+  position: absolute;
+  display: flex;
+  right: 20px;
+}
+
+.navbar #logout:hover {
+  color: #de2727;
+  cursor: pointer;
+}
+
+/* Error */
+.error {
+  margin-top: 20px;
+  justify-items: center;
+  display: grid;
+}
+.error img {
+  width: auto;
+}
+
+/* Home Page */
+.recipes-group-title {
+  text-align: left;
+}
+
+.recipes-list {
+  margin-bottom: 25px;
+}
+
+.recipes-list-category {
+  display: flex;
+}
+
+.recipes-list-category .dropdown {
+  margin-left: 10px;
+  font-size: 16px;
+  align-self: center;
+}
+
+.recipes-list-category .dropdown i {
+  color: #5ca43e;
+}
+
+.recipes-list-category .dropdown button {
+  background: none;
+  border: 0px;
+  padding: 0px;
+}
+
+.recipes-list-category .dropdown .dropdown-item:hover {
+  cursor: pointer;
+}
+
+.recipes-list-category .nav-link {
+  font-size: 16px;
+  align-self: center;
+  margin-left: 10px;
+}
+
+/* Diets */
+.diet img {
+  margin: 5px;
+}
+
+#recipe-page .diet {
+  margin-top: 10px;
+}
+
+/* Preview Recipe */
+
+.preview-card h5 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 40px;
+}
+
+.preview-card img {
+  border-radius: 5px;
+}
+
+.preview-card:hover {
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Favorite */
+.preview-card .favorite {
+  color: white;
+  font-size: 30px;
+  position: absolute;
+  bottom: 0px;
+  right: 10px;
+}
+.preview-card .favorite i {
+  text-shadow: 0 0 3px #000;
+}
+
+#recipe-page .favorite {
+  font-size: 30px;
+  color: #f28242;
+  width: fit-content;
+}
+
+#recipe-page .favorite:hover {
+  cursor: pointer;
+}
+
+/* Recipe Page */
+.recipe-numeric-info {
+  width: 400px;
+  text-align: center;
+}
+
+.recipe-numeric-info .number {
+  font-size: 20px;
+}
+
+.recipe-numeric-info p {
+  font-size: 18px;
+  margin-bottom: 0px;
+}
+
+#recipe-page h1 {
+  margin-bottom: 0px;
+}
+
+#recipe-page .card-img-top {
+  width: auto;
+  height: 220px;
+  margin-top: 10px;
+  border-radius: 3px;
+}
+
+/* Ingredients and Instructions*/
+.ingredients,
+.instructions {
+  text-align: left;
+  margin-left: 10px;
+}
+
+.ingredients .ingredient-name {
+  font-weight: bold;
+}
+
+.instructions .step {
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+/* Register and Login */
+
+.users-pages {
+  margin: auto;
+  width: 70%;
+}
+
+.users-pages .form-group.input-group {
+  margin-top: 22px;
+}
+
+.users-pages .error-message {
+  position: absolute;
+  font-size: 15px;
+  color: rgb(176, 15, 15);
+  margin-top: 0px;
+  text-align: left;
+}
+
+.users-pages .form-group button {
+  margin-top: 22px;
+  margin-bottom: 10px;
+}
+
+.show-password-icon {
+  top: 5px;
+  font-size: 18px;
+  position: absolute;
+  right: 10px;
+}
+
+.show-password-icon:hover {
+  cursor: pointer;
+}
+
+.response-message {
+  margin-top: 10px;
+  position: absolute;
+}
+
+/* Search */
+#search-page #search-bar {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 20px;
+}
