@@ -7,25 +7,34 @@ import FavoriteButton from "../components/recipe/FavoriteButton";
 import Ingredients from "../components/recipe/Ingredients";
 import Instructions from "../components/recipe/Instructions";
 import useFetch from "../hooks/useFetch";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import usePost from "../hooks/usePost";
 
 export default function Recipe() {
   const recipeId = useParams().id;
-  const { isLoading, isError, data } = useFetch(
-    `${global.dataUrl}/recipes/get/${recipeId}`
-  );
-  const userLoggedIn = useLocalStorage("username") != null;
 
-  if (isLoading) {
+  const {
+    isLoading: isLoadingRecipe,
+    isError: isErrorRecipe,
+    data: dataRecipe,
+  } = useFetch(`${global.dataUrl}/recipes/get/${recipeId}`);
+
+  // checking if recipe was favorited by user
+  const isFavoriteRequestBody = {
+    recipeId: recipeId,
+    username: localStorage.getItem("username"),
+  };
+  const { isLoading: isLoadingFavorite, data: dataFavorite } = usePost(
+    `${global.dataUrl}/favorite/isFavorite`,
+    isFavoriteRequestBody
+  );
+
+  if (isLoadingRecipe) {
     return <Loading />;
   }
 
-  if (isError) {
+  if (isErrorRecipe) {
     return <Error message={`for recipe ${recipeId}`} />;
   }
-
-  console.log("data ", data);
-  console.log("data.recipe ", data.recipe);
 
   let {
     name,
@@ -35,8 +44,13 @@ export default function Recipe() {
     pictureUrl,
     ingredients,
     instructions,
-  } = data;
-  let isFavoriteByUser = userLoggedIn && data.isFavoriteByUser;
+  } = dataRecipe;
+
+  if (isLoadingFavorite) {
+    return <Loading />;
+  }
+
+  let isFavoriteByUser = dataFavorite;
 
   return (
     <div className="container" id="recipe-page">
@@ -71,7 +85,7 @@ export default function Recipe() {
             </div>
           </div>
 
-          <Diets recipe={data.recipe} symbolSize="45px" />
+          <Diets recipe={dataRecipe.recipe} symbolSize="45px" />
         </div>
       </div>
 

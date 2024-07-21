@@ -85,11 +85,17 @@ export default function Search() {
 
       {searchResults && (
         <div className="row row-cols-1 row-cols-md-4 g-4">
-          {searchResults.map((recipeInfo) => (
-            <div className="col" key={recipeInfo.id}>
-              <RecipePreview recipe={recipeInfo} />
+          {searchResults?.length === 0 ? (
+            <div>No recipes found for the given search.</div>
+          ) : (
+            <div>
+              {searchResults.map((recipeInfo) => (
+                <div className="col" key={recipeInfo.id}>
+                  <RecipePreview recipe={recipeInfo} />
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

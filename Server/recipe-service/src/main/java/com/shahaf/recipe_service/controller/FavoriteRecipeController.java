@@ -62,5 +62,10 @@ public class FavoriteRecipeController {
         favoriteRecipeService.removeRecipeFromFavorites(recipeId, username);
         return new ResponseEntity<>(String.format("Recipe %d successfully removed as favorite by user %s.", recipeId, username), HttpStatus.OK);
     }
+
+    @PostMapping("/isFavorite")
+    public ResponseEntity<Boolean> isRecipeFavoriteByUser(@Valid @RequestBody FavoriteDto favoriteDto) {
+        return new ResponseEntity<>(favoriteRecipeService.isRecipeFavoriteByUser(favoriteDto.getRecipeId(), favoriteDto.getUsername()), HttpStatus.OK);
+    }
 }
 

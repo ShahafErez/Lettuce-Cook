@@ -22,6 +22,27 @@ export const addToFavorites = async (recipeId) => {
     });
 };
 
+export const checkIsFavoriteByUser = async (recipeId) => {
+  return fetch(`${global.dataUrl}/favorite/isFavorite`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    withCredentials: true,
+    body: JSON.stringify({
+      recipeId: recipeId,
+      username: localStorage.getItem("username"),
+    }),
+  })
+    .then((res) => {
+      return res;
+    })
+    .catch((e) => {
+      console.error("An error occurred during post request: ", e);
+    });
+};
+
 export const removeFromFavorites = async (recipeId) => {
   return fetch(`${global.dataUrl}/favorite/remove`, {
     method: "DELETE",

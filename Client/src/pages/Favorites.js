@@ -20,13 +20,17 @@ export default function Favorites() {
   return (
     <React.Fragment>
       <h1>My Favorite Recipes</h1>
-      <div className="row row-cols-1 row-cols-md-4 g-4">
-        {data.map((recipe) => (
-          <div className="col" key={recipe.id}>
-            <RecipePreview recipe={recipe} isFavoriteByUser={true} />
-          </div>
-        ))}
-      </div>
+      {data.length === 0 ? (
+        <div>No Favorite Recipe Found</div>
+      ) : (
+        <div className="row row-cols-1 row-cols-md-4 g-4">
+          {data.map((recipe) => (
+            <div className="col" key={recipe.id}>
+              <RecipePreview recipe={recipe} />
+            </div>
+          ))}
+        </div>
+      )}
     </React.Fragment>
   );
 }

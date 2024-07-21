@@ -76,11 +76,15 @@ public class FavoriteRecipeService {
     }
 
     public void validateRecipeIsFavoriteByUser(Long recipeId, String username) {
-        boolean isFavoriteByUser = favoriteRecipeRepository.existsByRecipeIdAndUserId(recipeId, username);
+        boolean isFavoriteByUser = isRecipeFavoriteByUser(recipeId, username);
         if (!isFavoriteByUser) {
             String errorMessage = String.format("Recipe %d was not added as favorite by user %s.", recipeId, username);
             logger.error(errorMessage);
             throw new ResourceNotFound(errorMessage);
         }
+    }
+
+    public boolean isRecipeFavoriteByUser(Long recipeId, String username) {
+        return favoriteRecipeRepository.existsByRecipeIdAndUserId(recipeId, username);
     }
 }
