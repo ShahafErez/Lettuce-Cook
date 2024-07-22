@@ -11,7 +11,7 @@
     <groupId>com.shahaf</groupId>
     <artifactId>recipe-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>lettuce-cook</name>
+    <name>recipe-service</name>
     <description>recipes service</description>
     <url/>
     <licenses>
@@ -129,6 +129,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                     <source>9</source>
                     <target>9</target>
                     <annotationProcessorPaths>

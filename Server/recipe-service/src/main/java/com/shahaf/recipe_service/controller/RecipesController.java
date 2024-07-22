@@ -1,9 +1,9 @@
 package com.shahaf.recipe_service.controller;
 
 
-import com.shahaf.recipe_service.enums.Category;
 import com.shahaf.recipe_service.dto.RecipeCreationDto;
 import com.shahaf.recipe_service.entity.Recipe;
+import com.shahaf.recipe_service.enums.Category;
 import com.shahaf.recipe_service.service.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,9 +39,9 @@ public class RecipesController {
     })
     @GetMapping("/get-recipes")
     public ResponseEntity<List<Recipe>> getRecipes(
-            @RequestParam(required = false) Integer numOfRecipes,
-            @RequestParam(required = false) String category,
-            @RequestParam(defaultValue = "false", required = false) Boolean random) {
+            @RequestParam(name = "numOfRecipes", required = false) Integer numOfRecipes,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "random", defaultValue = "false", required = false) Boolean random) {
         return new ResponseEntity<>(recipeService.getRecipes(numOfRecipes, stringToEnum(category, Category.class), random), HttpStatus.OK);
     }
 
@@ -53,7 +53,7 @@ public class RecipesController {
     })
     @GetMapping("/get/{recipeId}")
     @Cacheable(value = CACHE_RECIPES, key = "#recipeId")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long recipeId) {
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable("recipeId") Long recipeId) {
         return new ResponseEntity<>(recipeService.getRecipeById(recipeId), HttpStatus.OK);
     }
 
@@ -91,7 +91,7 @@ public class RecipesController {
     })
     @DeleteMapping("/delete/{recipeId}")
     @CacheEvict(cacheNames = CACHE_RECIPES, key = "#recipeId", beforeInvocation = true)
-    public ResponseEntity<String> deleteRecipe(@PathVariable Long recipeId) {
+    public ResponseEntity<String> deleteRecipe(@PathVariable("recipeId") Long recipeId) {
         recipeService.deleteRecipe(recipeId);
         return new ResponseEntity<>(String.format("Recipe %s deleted.", recipeId), HttpStatus.OK);
     }

@@ -35,25 +35,25 @@ public class SearchController {
     })
     @GetMapping()
     public ResponseEntity<List<Recipe>> searchRecipes(
-            @RequestParam(required = false) String searchTerm,
-            @RequestParam(required = false) String category) {
+            @RequestParam(name = "searchTerm", required = false) String searchTerm,
+            @RequestParam(name = "category", required = false) String category) {
         return new ResponseEntity<>(recipeElasticService.searchRecipes(searchTerm, stringToEnum(category, Category.class)), HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<String> addRecipeToElastic(@Valid @RequestBody Recipe recipe){
+    public ResponseEntity<String> addRecipeToElastic(@Valid @RequestBody Recipe recipe) {
         recipeElasticService.addRecipeToElastic(recipe);
         return new ResponseEntity<>("Recipe added successfully to Elasticsearch", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{recipeId}")
-    public ResponseEntity<String> removeRecipeFromElastic(@PathVariable Long recipeId){
+    public ResponseEntity<String> removeRecipeFromElastic(@PathVariable("recipeId") Long recipeId) {
         recipeElasticService.deleteRecipeById(recipeId);
         return new ResponseEntity<>("Recipe successfully removed from Elasticsearch", HttpStatus.OK);
     }
 
     @DeleteMapping("/all")
-    public ResponseEntity<String> removeAllRecipesFromElastic(){
+    public ResponseEntity<String> removeAllRecipesFromElastic() {
         recipeElasticService.deleteAllRecipes();
         return new ResponseEntity<>("All recipes successfully removed from Elasticsearch", HttpStatus.OK);
     }
