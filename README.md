@@ -4,7 +4,8 @@
 
 # Lettuce Cook
 
-Lettuce Cook is a recipe-sharing website that allows users to explore, save favorites, and search for recipes easily. The application is built using Java Spring Boot for the backend and React for the frontend.
+Lettuce Cook is a recipe-sharing website that allows users to explore, save favorites, and search for recipes easily. The application is built using Java Spring Boot for the backend and React for the frontend, and it utilizes a microservices architecture for enhanced scalability and maintainability.
+
 
 ## Features
 
@@ -17,7 +18,17 @@ Lettuce Cook is a recipe-sharing website that allows users to explore, save favo
 7. **Caching with Redis:** Utilizes Redis for caching recipes to enhance performance.
 8. **Category-based Organization:** Users can order recipes by categories and explore or search within specific categories.
 9. **Logging:** Backend activities are logged for monitoring and debugging purposes.
-10. **Data Storage in PostgreSQL** Data persistence and retrieval powered by PostgreSQL for a robust and scalable solution.
+10. **Data Storage in PostgreSQL:** Data persistence and retrieval powered by PostgreSQL for a robust and scalable solution.
+
+## Microservices Architecture
+
+The application has been split into the following microservices:
+
+1. **API Gateway:** Uses Eureka Gateway for routing and load balancing.
+2. **Naming Server:** Eureka server for service discovery.
+3. **Auth Service:** Handles user authentication (login, register) using JWT.
+4. **Recipe Service:** Manages recipes, including adding, deleting, retrieving, and handling all favorite actions.
+5. **Search Service:** Uses Elasticsearch to provide search functionality for recipes.
 
 ## Getting Started
 
@@ -26,27 +37,41 @@ Follow these steps to get Lettuce Cook up and running:
 1. Clone the repository: `git clone https://github.com/ShahafErez/lettuce-cook.git`
 2.Install dependencies for the frontend and backend:
    ```bash
-    # Frontend
-    cd frontend
+    # Client
+    cd client
     npm install
 
-    # Backend (using Maven)
-    cd ../backend
+    # Server (using Maven)
+    cd ../api-gateway
+    ./mvnw install
+    cd ../naming-server
+    ./mvnw install
+   cd ../auth-service
+    ./mvnw install
+   cd ../recipe-service
+    ./mvnw install
+   cd ../search-service
     ./mvnw install
     ```
+
 3. Set up Backend Dependencies:
     - PostgreSQL: Ensure PostgreSQL is installed and running. You can download it [here](https://www.postgresql.org/download).
     - Elasticsearch: Ensure Elasticsearch is installed and running. You can download it [here](https://www.elastic.co/downloads/elasticsearch).
     - Redis: Ensure Redis is installed and running. You can download it [here](https://redis.io/download).
+      
 4. Start the application:
     ```bash
-    # Frontend
-    cd ../frontend
+    # Client
+    cd ../client
     npm start
 
-    # Backend (running with Maven)
-    cd ../backend
-    ./mvnw spring-boot:run
+    # Server (running with Maven)
+    cd ../server
+    ./mvnw spring-boot:run -pl api-gateway
+    ./mvnw spring-boot:run -pl naming-server
+    ./mvnw spring-boot:run -pl auth-service
+    ./mvnw spring-boot:run -pl recipe-service
+    ./mvnw spring-boot:run -pl search-service
     ```
 
 ## Demos
