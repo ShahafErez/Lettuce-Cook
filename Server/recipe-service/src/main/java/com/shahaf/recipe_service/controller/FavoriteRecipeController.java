@@ -30,7 +30,7 @@ public class FavoriteRecipeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved user's favorite recipes.")})
     @GetMapping("/get/{username}")
-    public ResponseEntity<List<Recipe>> getFavoritesByUser(@PathVariable String username) {
+    public ResponseEntity<List<Recipe>> getFavoritesByUser(@PathVariable("username") String username) {
         return new ResponseEntity<>(favoriteRecipeService.getFavoritesByUser(username), HttpStatus.OK);
     }
 
