@@ -17,8 +17,7 @@ Lettuce Cook is a recipe-sharing website that allows users to explore, save favo
 6. **Search using Elasticsearch:** Powerful search functionality to find recipes based on keywords.
 7. **Caching with Redis:** Utilizes Redis for caching recipes to enhance performance.
 8. **Category-based Organization:** Users can order recipes by categories and explore or search within specific categories.
-9. **Logging:** Backend activities are logged for monitoring and debugging purposes.
-10. **Data Storage in PostgreSQL:** Data persistence and retrieval powered by PostgreSQL for a robust and scalable solution.
+9. **Data Storage in PostgreSQL:** Data persistence and retrieval powered by PostgreSQL for a robust and scalable solution.
 
 ## Microservices Architecture
 
